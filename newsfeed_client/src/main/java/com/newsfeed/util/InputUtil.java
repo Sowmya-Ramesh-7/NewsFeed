@@ -1,54 +1,88 @@
 package com.newsfeed.util;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
+import com.newsfeed.util.constants.Constants;
 import com.newsfeed.util.constants.Messages;
 
 public class InputUtil {
+
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static String readLine(String prompt) {
-		System.out.println(prompt);
+		System.out.println("\n" + prompt);
 		return scanner.nextLine();
 	}
 
 	public static String readString(String prompt) {
-		System.out.println(prompt);
+		System.out.println("\n" + prompt);
 		return scanner.next();
 	}
 
-	public static int readInt(String prompt, int maxAttempts) {
-		System.out.println(prompt);
+	public static String readLine(String prompt, String pattern, String errorMessage) {
 		int attempts = 0;
+		while (hasAttemptsLeft(attempts)) {
+			System.out.println("\n" + prompt);
+			String input = scanner.nextLine();
+			if (!input.isBlank() && Pattern.matches(pattern, input)) {
+				return input;
+			}
+			attempts++;
+			System.out.println(errorMessage + Messages.PLEASE_TRY_AGAIN);
+		}
+		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
+	}
 
-		while (attempts < maxAttempts) {
+	public static String readString(String prompt, String pattern, String errorMessage) {
+		int attempts = 0;
+		while (hasAttemptsLeft(attempts)) {
+			System.out.println("\n" + prompt);
+			String input = scanner.next();
+			if (!input.isBlank() && Pattern.matches(pattern, input)) {
+				return input;
+			}
+			attempts++;
+			System.out.println(errorMessage + Messages.PLEASE_TRY_AGAIN);
+		}
+		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
+	}
+
+	public static int readInt(String prompt, int maxAttempts) {
+		System.out.println("\n" + prompt);
+		int attempts = 0;
+		while (hasAttemptsLeft(attempts)) {
 			if (scanner.hasNextInt()) {
-				return scanner.nextInt();
+				int input = scanner.nextInt();
+				scanner.next();
+				return input;
 			} else {
 				attempts++;
-				System.out.println(
-						"Invalid input. Please enter a valid number. Attempt " + attempts + " of " + maxAttempts);
+				System.out.println(Messages.INVALID_NUMBER);
 				scanner.next();
 			}
 		}
 		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
 	}
-	
-	public static long readLong(String prompt, int maxAttempts) {
-		System.out.println(prompt);
-		int attempts = 0;
 
-		while (attempts < maxAttempts) {
+	public static long readLong(String prompt) {
+		System.out.println("\n" + prompt);
+		int attempts = 0;
+		while (hasAttemptsLeft(attempts)) {
 			if (scanner.hasNextLong()) {
-				return scanner.nextLong();
+				long input = scanner.nextLong();
+				scanner.nextLine();
+				return input;
 			} else {
 				attempts++;
-				System.out.println(
-						"Invalid input. Please enter a valid number. Attempt " + attempts + " of " + maxAttempts);
+				System.out.println(Messages.INVALID_NUMBER);
 				scanner.next();
 			}
 		}
 		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
+	}
+
+	public static boolean hasAttemptsLeft(int currentAttempt) {
+		return currentAttempt < Constants.MAXIMUM_INPUT_ATTEMPTS;
 	}
 }
-

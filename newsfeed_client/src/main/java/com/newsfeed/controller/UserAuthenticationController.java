@@ -1,66 +1,66 @@
 package com.newsfeed.controller;
 
 import com.newsfeed.util.InputUtil;
-import com.newsfeed.util.InputValidator;
 
 import java.io.IOException;
 
 import com.newsfeed.model.User;
 import com.newsfeed.service.UserAuthenticationService;
+import com.newsfeed.util.constants.Constants;
 import com.newsfeed.util.constants.Messages;
 import com.newsfeed.util.constants.Prompts;
 
 public class UserAuthenticationController {
-	private static final int MAXIMUM_INPUT_ATTEMPTS = 3;
-	UserAuthenticationService authenticationService;
+	private final UserAuthenticationService authenticationService;
 
 	public UserAuthenticationController(UserAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
-	public boolean login(){
-		String userId = InputUtil.readString(Prompts.ENTER_USER_ID);
-		String password = InputUtil.readString(Prompts.ENTER_YOUR_PASSWORD);
-		boolean isLoggedIn = authenticationService.login(userId, password);
-		return isLoggedIn;
+	public boolean login() throws IOException, InterruptedException {
+		try {
+			String email = InputUtil.readLine(Prompts.ENTER_EMAIL, Patterns.EMAIL_PATTERN, Messages.INVALID_EMAIL);
+			String password = InputUtil.readLine(Prompts.ENTER_YOUR_PASSWORD);
+			return authenticationService.login(email, password);
+		}catch(IllegalArgumentException exception){
+			System.out.println(Messages.LOGIN_FAILED + exception.getMessage());
+			return false;
+		}
 	}
 
 	public void signup() throws IOException, InterruptedException {
-		
-		String name = InputUtil.readString(Prompts.ENTER_NAME);
-		String email = InputUtil.readString(Prompts.ENTER_EMAIL);
-		String password = InputUtil.readString(Prompts.ENTER_PASSWORD);
-		Long phone = InputUtil.readLong(Prompts.ENTER_PHONE, MAXIMUM_INPUT_ATTEMPTS);
-		String errorMessage = validateUserData(name, email, phone);
-		
-		if (!errorMessage.isBlank()) {
-			throw new IllegalArgumentException(errorMessage);
-		}
-		
-		User newUser = new User();
-		newUser.setEmailAddress(email);
-		newUser.setName(name);
-		newUser.setPassword(password);
-		newUser.setPhoneNumber(phone);
-		
-		authenticationService.signup(newUser);
-	}
+		try {
+			String name = InputUtil.readLine(Prompts.ENTER_NAME, Patterns.NAME_PATTERN, Messages.INVALID_NAME);
+			String email = InputUtil.readLine(Prompts.ENTER_EMAIL, Patterns.EMAIL_PATTERN, Messages.INVALID_EMAIL);
+			String password = InputUtil.readLine(Prompts.ENTER_PASSWORD, Patterns.PASSWORD_PATTERN, Messages.INVALID_PASSWORD);
+			long phone = getPhoneNumber();
 
-	private String validateUserData(String name, String email, Long phone) {
-		String errorMessage = "";
-		if (String.valueOf(phone).length() != 10) {
-			errorMessage = Messages.INVALID_PHONE;
-		}else if(!InputValidator.isPatternMatched(name, Patterns.NAME_PATTERN)) {
-			errorMessage = Messages.INVALID_NAME;
-		}else if(!InputValidator.isPatternMatched(email, Patterns.EMAIL_PATTERN)) {
-			errorMessage = Messages.INVALID_EMAIL;
-		}else if(!InputValidator.isPatternMatched(email, Patterns.EMAIL_PATTERN)) {
-			errorMessage = Messages.INVALID_PASSWORD;
+			User newUser = new User();
+			newUser.setName(name);
+			newUser.setEmailAddress(email);
+			newUser.setPassword(password);
+			newUser.setPhoneNumber(phone);
+
+			authenticationService.signup(newUser);
+		}catch(IllegalArgumentException exception){
+			System.out.println(Messages.SIGNUP_FAILED + exception.getMessage());
 		}
-		return errorMessage;
 	}
 
 	public void logout() {
 		authenticationService.logout();
+	}
+
+	private long getPhoneNumber() {
+		int attempts = 0;
+		while (attempts < Constants.MAXIMUM_INPUT_ATTEMPTS) {
+			long phone = InputUtil.readLong(Prompts.ENTER_PHONE);
+			if (String.valueOf(phone).length() == 10) {
+				return phone;
+			}
+			attempts++;
+			System.out.println(Messages.INVALID_PHONE + Messages.PLEASE_TRY_AGAIN);
+		}
+		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
 	}
 }
