@@ -3,18 +3,18 @@ package com.newsfeed.model;
 import java.time.LocalDateTime;
 
 public class ExternalServer {
-	private int serverId;
+	private String serverId;
 	private String apiName;
 	private String baseUrl;
 	private String apiKey;
 	private LocalDateTime lastAccessed;
 	private boolean isActive;
 
-	public int getServerId() {
+	public String getServerId() {
 		return serverId;
 	}
 
-	public void setServerId(int serverId) {
+	public void setServerId(String serverId) {
 		this.serverId = serverId;
 	}
 

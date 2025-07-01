@@ -23,6 +23,12 @@ public class Messages {
 	public static final String SIGNUP_FAILED = "Signup Failed! ";
 	public static final String LOGIN_FAILED = "Login Failed! ";
 	public static final String SIGNUP_HEADER = String.format(HIGHLIGHT_TEXT, "--------------- Please your details for Signup: ---------------");
+	public static final String ADMIN_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "----------- Welcome to News Feed Application, ADMIN! ----------");
+	public static final String ENTER_SERVER_ID = "Enter the external server ID: ";
+	public static final String LIST_OF_SERVERS = "List of external servers: ";
+	public static final String ENTER_UPDATED_API_KEY = "Enter the updated API key: ";
+	public static final String NO_SERVER_CONFIGURED = "No servers are configured. ";
+	public static final String LOGIN_HEADER = String.format(HIGHLIGHT_TEXT, "------------------ Enter your Login details: ------------------");
 	
 
 }

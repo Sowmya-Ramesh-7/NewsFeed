@@ -17,13 +17,11 @@ import java.util.Optional;
 
 @WebServlet("/admin/servers/*")
 public class AdminServerController extends HttpServlet {
-	private static final String IS_UPDATE_LAST_ACCESSED = "updateAccessed";
-
 	private static final long serialVersionUID = 1L;
 
-	private static final String PARAM_NAME = "name";
 	private static final String PARAM_ACTIVE = "active";
 	private static final String PARAM_KEY = "apiKey";
+	private static final String IS_UPDATE_LAST_ACCESSED = "updateAccessed";
 
 	private transient ExternalServerService serverService;
 	private transient ObjectMapper objectMapper;
@@ -38,70 +36,89 @@ public class AdminServerController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
-		String apiName = request.getParameter(PARAM_NAME);
-		if (apiName != null) {
-			handleGetServerByName(apiName, response);
-		} else {
-			handleGetAllServers(response);
+		try {
+			String pathInfo = request.getPathInfo();
+			if (pathInfo != null && pathInfo.length() > 1) {
+				String serverIdString = pathInfo.substring(1);
+				int serverId = Integer.parseInt(serverIdString);
+				handleGetServerById(serverId, response);
+			} else {
+				handleGetAllServers(response);
+			}
+		} catch (NumberFormatException exception) {
+			handleBadRequestError(response, Messages.INVALID_SERVER_ID);
 		}
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String apiName = request.getParameter(PARAM_NAME);
-		String activeParam = request.getParameter(PARAM_ACTIVE);
-		String apiKey = request.getParameter(PARAM_KEY);
-		String updateAccessed = request.getParameter(IS_UPDATE_LAST_ACCESSED);
-		response.setStatus(HttpServletResponse.SC_OK);
-		response.setContentType("application/json");
-		
-		if (apiName == null) {
-			handleBadRequestError(response, Messages.INVALID_API_NAME);
-		} else if (activeParam != null) {
-			handleUpdateStatus(request, response, apiName);
-		} else if (apiKey != null) {
-			handleUpdateApiKey(request, response, apiName);
-		} else if ("true".equalsIgnoreCase(updateAccessed)) {
-			handleUpdateLastAccessed(response, apiName);
-		}
-		handleBadRequestError(response, Messages.INVALID_SERVER_DETAILS);
-	}
+	    response.setStatus(HttpServletResponse.SC_OK);
+	    response.setContentType("application/json");
 
-	private void handleGetServerByName(String apiName, HttpServletResponse response) throws IOException {
-	    Optional<ExternalServer> server = serverService.findByApiName(apiName);
-	    if (server.isPresent()) {
-	        objectMapper.writeValue(response.getWriter(), ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, server.get()));
-	    } else {
-	    	handleNotFoundError(response, Messages.INVALID_SERVER_DETAILS);
+	    try {
+	        String pathInfo = request.getPathInfo();
+	        if (pathInfo == null || pathInfo.length() <= 1) {
+	            handleBadRequestError(response, Messages.INVALID_SERVER_ID);
+	            return;
+	        }
+
+	        int serverId = Integer.parseInt(pathInfo.substring(1));
+
+	        String activeParam = request.getParameter(PARAM_ACTIVE);
+	        String apiKey = request.getParameter(PARAM_KEY);
+	        String updateAccessed = request.getParameter(IS_UPDATE_LAST_ACCESSED);
+
+	        if (activeParam != null) {
+	            handleUpdateStatus(response, serverId, activeParam);
+	        } else if (apiKey != null) {
+	            handleUpdateApiKey(response, serverId, apiKey);
+	        } else if ("true".equalsIgnoreCase(updateAccessed)) {
+	            handleUpdateLastAccessed(response, serverId);
+	        } else {
+	            handleBadRequestError(response, Messages.INVALID_SERVER_DETAILS);
+	        }
+
+	    } catch (NumberFormatException e) {
+	        handleBadRequestError(response, Messages.INVALID_SERVER_ID);
 	    }
 	}
 
+	private void handleGetServerById(int serverId, HttpServletResponse response) throws IOException {
+		Optional<ExternalServer> server = serverService.findById(serverId);
+		if (server.isPresent()) {
+			objectMapper.writeValue(response.getWriter(),
+					ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, server.get()));
+		} else {
+			handleNotFoundError(response, Messages.INVALID_SERVER_DETAILS);
+		}
+	}
+
 	private void handleGetAllServers(HttpServletResponse response) throws IOException {
-	    List<ExternalServer> servers = serverService.findAll();
-	    objectMapper.writeValue(response.getWriter(), ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, servers));
+		List<ExternalServer> servers = serverService.findAll();
+		objectMapper.writeValue(response.getWriter(),
+				ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, servers));
 	}
 
-	private void handleUpdateStatus(HttpServletRequest request, HttpServletResponse response, String apiName)
+	private void handleUpdateStatus(HttpServletResponse response, int serverId, String activeParam)
 			throws IOException {
-		boolean isActive = Boolean.parseBoolean(request.getParameter(PARAM_ACTIVE));
-		serverService.updateActiveStatus(apiName, isActive);
+		boolean isActive = Boolean.parseBoolean(activeParam);
+		serverService.updateActiveStatus(serverId, isActive);
 		handleUpdateSucessResponse(response, Messages.SERVER_DETAILS_UPDATED_SUCESSFULLY);
 	}
 
-	private void handleUpdateLastAccessed(HttpServletResponse response, String apiName) throws IOException {
-		serverService.updateLastAccessed(apiName);
+	private void handleUpdateLastAccessed(HttpServletResponse response, int serverId) throws IOException {
+		serverService.updateLastAccessed(serverId);
 		handleUpdateSucessResponse(response, Messages.SERVER_DETAILS_UPDATED_SUCESSFULLY);
 	}
 
-	private void handleUpdateApiKey(HttpServletRequest request, HttpServletResponse response, String apiName)
+	private void handleUpdateApiKey(HttpServletResponse response, int serverId, String apiKey)
 			throws IOException {
-		String apiKey = request.getParameter(PARAM_KEY);
 		if (apiKey == null || apiKey.isBlank()) {
-			handleBadRequestError(response, Messages.INVALID_API_KEY );
+			handleBadRequestError(response, Messages.INVALID_API_KEY);
 			return;
 		}
 
-		serverService.updateActiveKey(apiName, apiKey);
+		serverService.updateActiveKey(serverId, apiKey);
 		handleUpdateSucessResponse(response, Messages.SERVER_DETAILS_UPDATED_SUCESSFULLY);
 	}
 

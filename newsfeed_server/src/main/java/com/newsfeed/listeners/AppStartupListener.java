@@ -3,7 +3,7 @@ package com.newsfeed.listeners;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.newsfeed.service.ThirdPartyNewsScheduler;
+import com.newsfeed.integration.ThirdPartyNewsScheduler;
 import com.newsfeed.util.ApplicationContext;
 
 import jakarta.servlet.ServletContextEvent;
@@ -31,7 +31,8 @@ public class AppStartupListener implements ServletContextListener {
         ApplicationContext.registerInstance(HttpClient.class, HttpClient.newHttpClient());
         ApplicationContext.registerInstance(ObjectMapper.class, objectMapper);
 
-        // TODO:Schedule Task
+        ThirdPartyNewsScheduler newsScheduler = ApplicationContext.getObject(ThirdPartyNewsScheduler.class);
+        newsScheduler.scheduleNewsFetchTasks();
     }
 
     @Override

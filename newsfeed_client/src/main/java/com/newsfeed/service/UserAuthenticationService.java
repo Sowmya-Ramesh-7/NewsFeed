@@ -10,53 +10,61 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.model.ApiResponse;
 import com.newsfeed.model.User;
-import com.newsfeed.util.ApplicationContext;
 import com.newsfeed.util.JwtUtil;
+import com.newsfeed.util.constants.ApiRoutes;
 
 public class UserAuthenticationService {
-	
-	private static final String BASE_URL = "http://localhost:8080/newsfeed_server";
-	private static final String SIGNUP_ROUTE = "/auth/signup";
-	private static final String LOGIN_ROUTE = "/auth/login";
-	private static final ObjectMapper objectMapper = ApplicationContext.getObject(ObjectMapper.class);
-	private static final HttpClient httpClient  = ApplicationContext.getObject(HttpClient.class);
-	
+	private ObjectMapper objectMapper;
+	private HttpClient httpClient;
+
+	public UserAuthenticationService(ObjectMapper objectMapper, HttpClient httpClient) {
+		this.objectMapper = objectMapper;
+		this.httpClient = httpClient;
+	}
+
 	public void signup(User user) throws IOException, InterruptedException {
-		Map<String,String> headers = new HashMap<String,String>();
-		headers.put("Accept", "application/json");
-		HttpRequest signupRequest = HttpRequestBuilder.buildRequest("POST", BASE_URL + SIGNUP_ROUTE, headers, objectMapper.writeValueAsString(user));
+		String requestBody = objectMapper.writeValueAsString(user);
+		HttpRequest signupRequest = HttpRequestBuilder.buildRequest("POST", ApiRoutes.SIGNUP_ROUTE, requestBody);
 		HttpResponse<String> response = httpClient.send(signupRequest, HttpResponse.BodyHandlers.ofString());
 		ApiResponse signupResponse = objectMapper.readValue(response.body(), ApiResponse.class);
-		if(signupResponse.isSuccess()){
+		if (signupResponse.isSuccess()) {
 			System.out.println(signupResponse.getMessage());
-		}else {
+		} else {
 			System.out.println(signupResponse.getMessage());
 		}
 	}
-	
-	public boolean login(String email, String password) throws IOException, InterruptedException {
-		Map<String,String> headers = new HashMap<String,String>();
-		headers.put("Accept", "application/json");
+
+	public Map<String, String> login(String email, String password) throws IOException, InterruptedException {
 		User user = new User();
 		user.setEmailAddress(email);
 		user.setPassword(password);
-		
-		HttpRequest loginRequest = HttpRequestBuilder.buildRequest("POST", BASE_URL + LOGIN_ROUTE, headers, objectMapper.writeValueAsString(user));
+
+		HttpRequest loginRequest = HttpRequestBuilder.buildRequest("POST", ApiRoutes.LOGIN_ROUTE, objectMapper.writeValueAsString(user));
 		HttpResponse<String> response = httpClient.send(loginRequest, HttpResponse.BodyHandlers.ofString());
 		ApiResponse loginResponse = objectMapper.readValue(response.body(), ApiResponse.class);
-		
+		Map<String, String> data = new HashMap<String, String>();
 		if (loginResponse.isSuccess()) {
-			HashMap<String,String> data = (HashMap<String,String>)loginResponse.getData();
-            String token = data.get("token").toString();
-            JwtUtil.saveToken(token);
-            System.out.println(loginResponse.getMessage());
-            return true;
-        }
+			data = (HashMap<String, String>) loginResponse.getData();
+			String token = data.get("token").toString();
+			JwtUtil.saveToken(token);
+			System.out.println(loginResponse.getMessage());
+			return data;
+		}
+		
 		System.out.println(loginResponse.getMessage());
-		return false;
+		return data;
 	}
 
-	public void logout() {
-		
+	public boolean logout() throws IOException, InterruptedException {
+		Map<String, String> headers = HttpRequestBuilder.getAuthHeader();
+
+		HttpRequest request = HttpRequestBuilder.buildRequest("POST", ApiRoutes.LOGOUT_ROUTE, headers);
+		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+		ApiResponse logoutResponse = objectMapper.readValue(response.body(), ApiResponse.class);
+		JwtUtil.clearToken();
+
+		System.out.println(logoutResponse.getMessage());
+		return false;
 	}
 }

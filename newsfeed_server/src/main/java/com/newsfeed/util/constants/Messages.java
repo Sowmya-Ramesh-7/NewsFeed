@@ -1,7 +1,7 @@
 package com.newsfeed.util.constants;
 
 public class Messages {
-	public static final String SIGNUP_SUCCESS = "Signup sucessful";
+	public static final String SIGNUP_SUCCESS = "Signup successful ! Please Login.";
 	public static final String USER_ALREADY_EXISTS = "User already exists with this email.";
 	public static final String LOGIN_SUCCESS = "Login successful.";
 	public static final String INVALID_CREDENTIALS = "Invalid email or password.";
@@ -14,6 +14,7 @@ public class Messages {
 	public static final String SERVER_DETAILS_UPDATED_SUCESSFULLY = "Updated Server Details Successfully";
 	public static final String INVALID_API_KEY = "Invalid Api Key";
 	public static final String INVALID_API_NAME = "Invalid API Name";
+	public static final String INVALID_SERVER_ID = "Invalid Server Id.";
 	public static final String INVALID_SERVER_DETAILS = "Invalid Server Details";
 	public static final String FORBIDDEN_REQUEST = "Access denied: Admins only";
 	public static final String EXTERNAL_API_ERROR = "Failed to get data from server";

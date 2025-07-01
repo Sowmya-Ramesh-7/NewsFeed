@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.dto.ApiResponse;
@@ -79,15 +78,16 @@ public class UserAuthenticationController extends HttpServlet {
 
 	private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		User user = objectMapper.readValue(request.getReader(), User.class);
-		Optional<String> tokenOptional = userAuthenticationService.login(user.getEmailAddress(), user.getPassword());
+		Map<String, String> loginResponse = userAuthenticationService.login(user.getEmailAddress(), user.getPassword());
 
 		int statusCode;
 		ApiResponse apiResponse;
 
-		if (tokenOptional.isPresent()) {
+		if (loginResponse.containsKey("token") && !loginResponse.get("token").isBlank()) {
 			statusCode = HttpServletResponse.SC_OK;
 			Map<String, String> token = new HashMap<>();
-			token.put("token", tokenOptional.get());
+			token.put("token", loginResponse.get("token"));
+			token.put("isAdmin", loginResponse.get("isAdmin"));
 			apiResponse = ApiResponse.success(Messages.LOGIN_SUCCESS, token);
 		} else {
 			statusCode = HttpServletResponse.SC_UNAUTHORIZED;

@@ -12,11 +12,11 @@ import java.util.*;
 
 public class ExternalServerDao {
 	
-    public Optional<ExternalServer> getByName(String name) {
+    public Optional<ExternalServer> getById(int id) {
         try (Connection connection = DBConnect.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_EXTERNAL_SERVER_BY_NAME)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_EXTERNAL_SERVER_BY_ID)) {
 
-            preparedStatement.setString(1, name);
+            preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -47,8 +47,8 @@ public class ExternalServerDao {
         return servers;
     }
 
-    public int update(String name, String columnName, Object value) {
-        String query = "UPDATE external_server SET " + columnName + " = ? WHERE api_name = ?";
+    public int update(int serverId, String columnName, Object value) {
+        String query = "UPDATE external_server SET " + columnName + " = ? WHERE server_id = ?";
 
         try (Connection connection = DBConnect.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -61,7 +61,7 @@ public class ExternalServerDao {
                 preparedStatement.setTimestamp(1, Timestamp.valueOf((LocalDateTime) value));
             }
 
-            preparedStatement.setString(2, name);
+            preparedStatement.setInt(2, serverId);
             return preparedStatement.executeUpdate();
 
         } catch (SQLException | ClassNotFoundException | IOException e) {
@@ -71,7 +71,7 @@ public class ExternalServerDao {
 
     private ExternalServer mapResultSetToServer(ResultSet rs) throws SQLException {
         ExternalServer server = new ExternalServer();
-        server.setServerId(rs.getString("server_id"));
+        server.setServerId(rs.getInt("server_id"));
         server.setApiName(rs.getString("api_name"));
         server.setBaseUrl(rs.getString("base_url"));
         server.setApiKey(rs.getString("api_key"));

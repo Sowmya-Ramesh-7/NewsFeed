@@ -15,23 +15,23 @@ public class ExternalServerService {
         this.serverDao = serverDao;
     }
 
-    public Optional<ExternalServer> findByApiName(String apiName) {
-        return serverDao.getByName(apiName);
+    public Optional<ExternalServer> findById(int Id) {
+        return serverDao.getById(Id);
     }
 
     public List<ExternalServer> findAll() {
         return serverDao.getAll();
     }
     
-    public void updateLastAccessed(String apiName) {
-        serverDao.update(apiName, "last_accessed", LocalDateTime.now());
+    public void updateLastAccessed(int serverId) {
+        serverDao.update(serverId, "last_accessed", LocalDateTime.now());
     }
 
-    public void updateActiveStatus(String apiName, boolean isActive) {
-        serverDao.update(apiName, "is_active", isActive);
+    public void updateActiveStatus(int serverId, boolean isActive) {
+        serverDao.update(serverId, "is_active", isActive);
     }
     
-    public void updateActiveKey(String apiName, String value) {
-        serverDao.update(apiName, "api_key", value);
+    public void updateActiveKey(int serverId, String value) {
+        serverDao.update(serverId, "api_key", value);
     }
 }

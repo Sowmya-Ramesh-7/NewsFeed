@@ -3,28 +3,31 @@ package com.newsfeed.controller;
 import com.newsfeed.util.InputUtil;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import com.newsfeed.model.User;
 import com.newsfeed.service.UserAuthenticationService;
 import com.newsfeed.util.constants.Constants;
 import com.newsfeed.util.constants.Messages;
+import com.newsfeed.util.constants.Patterns;
 import com.newsfeed.util.constants.Prompts;
 
 public class UserAuthenticationController {
-	private final UserAuthenticationService authenticationService;
+	private UserAuthenticationService authenticationService;
 
 	public UserAuthenticationController(UserAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 
-	public boolean login() throws IOException, InterruptedException {
+	public Map<String, String> login() throws IOException, InterruptedException {
 		try {
 			String email = InputUtil.readLine(Prompts.ENTER_EMAIL, Patterns.EMAIL_PATTERN, Messages.INVALID_EMAIL);
 			String password = InputUtil.readLine(Prompts.ENTER_YOUR_PASSWORD);
 			return authenticationService.login(email, password);
 		}catch(IllegalArgumentException exception){
 			System.out.println(Messages.LOGIN_FAILED + exception.getMessage());
-			return false;
+			return Collections.emptyMap();
 		}
 	}
 
@@ -47,8 +50,12 @@ public class UserAuthenticationController {
 		}
 	}
 
-	public void logout() {
-		authenticationService.logout();
+	public boolean logout() throws IOException, InterruptedException {
+		return authenticationService.logout();
+	}
+	
+	public boolean isAdmin() {
+		return false;
 	}
 
 	private long getPhoneNumber() {

@@ -1,5 +1,7 @@
 package com.newsfeed.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.newsfeed.dao.UserDao;
@@ -26,14 +28,15 @@ public class UserAuthenticationService {
 		return user.getUserId();
 	}
 	
-	public Optional<String> login(String email, String password) {
+	public Map<String,String> login(String email, String password) {
         Optional<User> existingUser = userDao.findByEmail(email);
-
+        Map<String, String> loginResponse = new HashMap<String,String>();
         if (existingUser.isPresent() && existingUser.get().getPassword().equals(password)) {
-            String token = JwtUtil.generateToken(existingUser.get());
-            return Optional.of(token);
+        	User user = existingUser.get();
+        	String token = JwtUtil.generateToken(user);
+        	loginResponse.put("token", token);
+        	loginResponse.put("isAdmin", String.valueOf(user.getIsAdmin()));
         }
-
-        return Optional.empty();
+        return loginResponse;
     }
 }

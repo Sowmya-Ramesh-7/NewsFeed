@@ -24,12 +24,13 @@ public class NewsArticleDao {
 				preparedStatement.setString(4, article.getSource());
 				preparedStatement.setString(5, article.getArticleUrl());
 				preparedStatement.setString(6, article.getCategoryId());
-				preparedStatement.setString(6, article.getImageUrl());
-				preparedStatement.setTimestamp(7, Timestamp.valueOf(article.getPublishedDate()));
+				preparedStatement.setString(7, article.getImageUrl());
+				preparedStatement.setTimestamp(8, Timestamp.valueOf(article.getPublishedDate()));
 				preparedStatement.addBatch();
 			}
 			preparedStatement.executeBatch();
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
+			exception.printStackTrace();
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
 	}
