@@ -16,10 +16,12 @@ import com.newsfeed.util.constants.ApiRoutes;
 public class UserAuthenticationService {
 	private ObjectMapper objectMapper;
 	private HttpClient httpClient;
+	private boolean isLoggedIn;
 
 	public UserAuthenticationService(ObjectMapper objectMapper, HttpClient httpClient) {
 		this.objectMapper = objectMapper;
 		this.httpClient = httpClient;
+		this.isLoggedIn = false;
 	}
 
 	public void signup(User user) throws IOException, InterruptedException {
@@ -47,6 +49,7 @@ public class UserAuthenticationService {
 			data = (HashMap<String, String>) loginResponse.getData();
 			String token = data.get("token").toString();
 			JwtUtil.saveToken(token);
+			isLoggedIn = true;
 			System.out.println(loginResponse.getMessage());
 			return data;
 		}
@@ -65,6 +68,11 @@ public class UserAuthenticationService {
 		JwtUtil.clearToken();
 
 		System.out.println(logoutResponse.getMessage());
-		return false;
+		isLoggedIn = false;
+		return isLoggedIn;
+	}
+
+	public boolean isLoggedIn() {
+		return isLoggedIn;
 	}
 }

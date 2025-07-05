@@ -23,8 +23,8 @@ public class AdminServerController extends HttpServlet {
 	private static final String PARAM_KEY = "apiKey";
 	private static final String IS_UPDATE_LAST_ACCESSED = "updateAccessed";
 
-	private transient ExternalServerService serverService;
-	private transient ObjectMapper objectMapper;
+	private ExternalServerService serverService;
+	private ObjectMapper objectMapper;
 
 	@Override
 	public void init() throws ServletException {

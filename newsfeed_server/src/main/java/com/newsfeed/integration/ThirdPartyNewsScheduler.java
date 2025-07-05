@@ -40,6 +40,7 @@ public class ThirdPartyNewsScheduler {
                 fetcher.saveArticles(articles);
                 serverService.updateLastAccessed(server.getServerId());
             } catch (Exception e) {
+            	e.printStackTrace();
                 System.err.println("Failed to fetch from " + server.getApiName() + ": " + e.getMessage());
             }
         }

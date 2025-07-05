@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,10 +84,7 @@ public class UserAuthenticationController extends HttpServlet {
 
 		if (loginResponse.containsKey("token") && !loginResponse.get("token").isBlank()) {
 			statusCode = HttpServletResponse.SC_OK;
-			Map<String, String> token = new HashMap<>();
-			token.put("token", loginResponse.get("token"));
-			token.put("isAdmin", loginResponse.get("isAdmin"));
-			apiResponse = ApiResponse.success(Messages.LOGIN_SUCCESS, token);
+			apiResponse = ApiResponse.success(Messages.LOGIN_SUCCESS, loginResponse);
 		} else {
 			statusCode = HttpServletResponse.SC_UNAUTHORIZED;
 			apiResponse = ApiResponse.error(Messages.INVALID_CREDENTIALS);

@@ -10,4 +10,7 @@ public class Prompts {
 	public static final String ENTER_PASSWORD = "Enter your password: ";
 	public static final String ENTER_PHONE = "Enter your phone number: ";
 	public static final String CHOOSE_OPTION = "Choose an option: ";
+	public static final String PLEASE_CHOOSE_OPTION = "Please choose the options below: ";
+	public static final String ENTER_YOUR_CHOICE = "Enter Your Choice: ";
+	public static final String ENTER_CATEGORY_ID = "Enter the News Category Id: ";
 }

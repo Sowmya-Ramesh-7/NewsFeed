@@ -8,8 +8,11 @@ import com.newsfeed.util.constants.Query;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewsArticleDao {
@@ -34,4 +37,69 @@ public class NewsArticleDao {
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
 	}
+
+	public List<NewsArticle> getArticlesByDateRange(LocalDate start, LocalDate end) {
+		return getArticlesByFilters(start, end, null);
+	}
+
+	public List<NewsArticle> getArticlesByCategory(String category) {
+		return getArticlesByFilters(null, null, category);
+	}
+
+	public List<NewsArticle> getArticlesByFilters(LocalDate start, LocalDate end, String category) {
+		List<Object> parameters = new ArrayList<>();
+		StringBuilder query = new StringBuilder("SELECT * FROM news_articles WHERE 1=1");
+
+		if (start != null && end != null) {
+			query.append(" AND published_date BETWEEN ? AND ?");
+			parameters.add(java.sql.Date.valueOf(start));
+			parameters.add(java.sql.Date.valueOf(end));
+		}
+
+		if (category != null && !category.isBlank()) {
+			query.append(" AND category_id = ?");
+			parameters.add(category);
+		}
+
+		query.append(" ORDER BY published_date DESC");
+
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(query.toString())) {
+			for (int i = 0; i < parameters.size(); i++) {
+				preparedStatement.setObject(i + 1, parameters.get(i));
+			}
+
+			List<NewsArticle> articles = new ArrayList<>();
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				NewsArticle article = getArticlefromResultSet(resultSet);
+				articles.add(article);
+
+			}
+			return articles;
+
+		} catch (SQLException | ClassNotFoundException | IOException exception) {
+			exception.printStackTrace();
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+	}
+
+	private NewsArticle getArticlefromResultSet(ResultSet resultSet) throws SQLException {
+		NewsArticle article = new NewsArticle();
+		article.setArticleId(resultSet.getString("article_id"));
+		article.setTitle(resultSet.getString("title"));
+		article.setContent(resultSet.getString("content"));
+		article.setSource(resultSet.getString("source_link"));
+		article.setArticleUrl(resultSet.getString("article_url"));
+		article.setCategoryId(resultSet.getString("category_id"));
+		article.setImageUrl(resultSet.getString("image_url"));
+
+		Timestamp timestamp = resultSet.getTimestamp("published_date");
+		if (timestamp != null) {
+			article.setPublishedDate(timestamp.toLocalDateTime());
+		}
+
+		return article;
+	}
+
 }

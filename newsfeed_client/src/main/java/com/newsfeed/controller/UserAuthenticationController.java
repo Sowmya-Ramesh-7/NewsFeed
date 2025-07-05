@@ -15,7 +15,7 @@ import com.newsfeed.util.constants.Prompts;
 
 public class UserAuthenticationController {
 	private UserAuthenticationService authenticationService;
-
+	
 	public UserAuthenticationController(UserAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -53,10 +53,6 @@ public class UserAuthenticationController {
 	public boolean logout() throws IOException, InterruptedException {
 		return authenticationService.logout();
 	}
-	
-	public boolean isAdmin() {
-		return false;
-	}
 
 	private long getPhoneNumber() {
 		int attempts = 0;
@@ -69,5 +65,9 @@ public class UserAuthenticationController {
 			System.out.println(Messages.INVALID_PHONE + Messages.PLEASE_TRY_AGAIN);
 		}
 		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
+	}
+
+	public boolean isLoggedIn() {
+		return authenticationService.isLoggedIn();
 	}
 }

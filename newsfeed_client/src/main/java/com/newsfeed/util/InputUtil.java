@@ -1,13 +1,17 @@
 package com.newsfeed.util;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import com.newsfeed.util.constants.Constants;
 import com.newsfeed.util.constants.Messages;
+import com.newsfeed.util.constants.Patterns;
 
 public class InputUtil {
-
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Patterns.DATE_INPUT_FORMAT);
 	private static final Scanner scanner = new Scanner(System.in);
 
 	public static String readLine(String prompt) {
@@ -85,4 +89,20 @@ public class InputUtil {
 	public static boolean hasAttemptsLeft(int currentAttempt) {
 		return currentAttempt < Constants.MAXIMUM_INPUT_ATTEMPTS;
 	}
+
+    public static LocalDate readDate(String prompt) {
+    	int attempts = 0;
+		while (hasAttemptsLeft(attempts)) {
+			System.out.println("\n" + prompt);
+			String input = scanner.nextLine();
+			try {
+	            return LocalDate.parse(input, DATE_FORMATTER);
+	        } catch (DateTimeParseException e) {
+	            System.out.println(Messages.INVALID_DATE_FORMAT);
+	            attempts++;
+	        }
+		}
+		throw new IllegalArgumentException(Messages.EXCEEDED_MAXIMUM_INPUT_ATTEMPTS);
+    } 
+	
 }

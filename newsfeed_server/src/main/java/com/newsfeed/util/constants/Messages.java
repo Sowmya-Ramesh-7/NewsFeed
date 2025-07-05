@@ -18,5 +18,9 @@ public class Messages {
 	public static final String INVALID_SERVER_DETAILS = "Invalid Server Details";
 	public static final String FORBIDDEN_REQUEST = "Access denied: Admins only";
 	public static final String EXTERNAL_API_ERROR = "Failed to get data from server";
+	public static final String FOUND_ARTICLES = "Articles fetched successfully";
+	public static final String NO_ARTICLES_FOUND = "No Articles found.";
+	public static final String GOT_ALL_CATEGORIES_SUCCESSFULLY = "Categories Found successfully.";
+	public static final String FAILED_TO_GET_CATEGORIES = "Failed to get the News Categoryes";
 	
 }

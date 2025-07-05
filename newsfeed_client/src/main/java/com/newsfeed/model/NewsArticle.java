@@ -2,6 +2,10 @@ package com.newsfeed.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsArticle {
     private String articleId;
     private String title;
@@ -44,7 +48,7 @@ public class NewsArticle {
 		this.source = source;
 	}
 
-	
+	@JsonAlias("url")
 	public String getArticleUrl() {
 		return articleUrl;
 	}
@@ -60,7 +64,8 @@ public class NewsArticle {
 	public void setCategoryId(String categoryId) {
 		this.categoryId = categoryId;
 	}
-
+	
+	@JsonAlias("urlToImage")
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -68,7 +73,8 @@ public class NewsArticle {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-
+	
+	@JsonAlias("publishedAt")
 	public LocalDateTime getPublishedDate() {
 		return publishedDate;
 	}
@@ -77,4 +83,13 @@ public class NewsArticle {
 		this.publishedDate = publishedDate;
 	}
 	
+	public String toString(){
+		return "\nArticle Id: " + articleId +
+		           "\n\n" + title +
+		           "\n\n" + content +
+		           "\n\nsource: " + source +
+		           "\n\nURL:\n" + articleUrl + 
+		           "\n\nPublished Date: " + publishedDate +
+		           "\n";
+	}
 }

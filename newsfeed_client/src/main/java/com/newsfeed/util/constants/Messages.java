@@ -5,6 +5,7 @@ public class Messages {
 	private static final String WHITE_TEXT= "\u001B[37m";
 	private static final String RESET_TO_BLACK_TEXT = "\u001B[0m";
 	private static final String HIGHLIGHT_TEXT = BLACK_BACKGROUND + WHITE_TEXT + "%s" + RESET_TO_BLACK_TEXT;
+	
 	public static final String WELCOME = String.format(HIGHLIGHT_TEXT, "----------------Welcome to News Feed Application---------------");
 	public static final String SIGNUP_OPTION = "1. Signup";
 	public static final String LOGIN_OPTION = "2. Login";
@@ -23,12 +24,21 @@ public class Messages {
 	public static final String SIGNUP_FAILED = "Signup Failed! ";
 	public static final String LOGIN_FAILED = "Login Failed! ";
 	public static final String SIGNUP_HEADER = String.format(HIGHLIGHT_TEXT, "--------------- Please your details for Signup: ---------------");
-	public static final String ADMIN_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "----------- Welcome to News Feed Application, ADMIN! ----------");
+	public static final String ADMIN_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "-------------- News Feed Application: ADMIN MENU -------------");
+	public static final String USER_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "Welcome to the News Application, %s! Date: %s Time:%s");
 	public static final String ENTER_SERVER_ID = "Enter the external server ID: ";
 	public static final String LIST_OF_SERVERS = "List of external servers: ";
 	public static final String ENTER_UPDATED_API_KEY = "Enter the updated API key: ";
 	public static final String NO_SERVER_CONFIGURED = "No servers are configured. ";
 	public static final String LOGIN_HEADER = String.format(HIGHLIGHT_TEXT, "------------------ Enter your Login details: ------------------");
+	public static final String HEADLINES_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "-------------------- H E A D L I N E S :--------------------");
+	public static final String INVALID_DATE_FORMAT = "Invalid date format. Please use yyyy-MM-dd.";
+	public static final String START_DATE_CANNOT_BE_AFTER_END_DATE = "Start date cannot be after end date.";
+	public static final String ENTER_END_DATE = "Enter end date (yyyy-MM-dd): ";
+	public static final String ENTER_START_DATE = "Enter start date (yyyy-MM-dd): ";
+	public static final String INVALID_CATEGORY_ID = "Invalid Category Id selected.";
+	public static final String LINE = "_______________________________________________________________________________\n";
+	public static final String FIRST_ARTICLE = "You are on the first article.";
+	public static final String LAST_ARTICLE = "You are on the last article.";
 	
-
 }

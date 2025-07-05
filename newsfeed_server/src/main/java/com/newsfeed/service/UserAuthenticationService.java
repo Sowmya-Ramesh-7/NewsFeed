@@ -36,6 +36,7 @@ public class UserAuthenticationService {
         	String token = JwtUtil.generateToken(user);
         	loginResponse.put("token", token);
         	loginResponse.put("isAdmin", String.valueOf(user.getIsAdmin()));
+        	loginResponse.put("name", user.getName());
         }
         return loginResponse;
     }
