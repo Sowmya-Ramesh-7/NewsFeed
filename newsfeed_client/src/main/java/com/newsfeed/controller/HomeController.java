@@ -25,7 +25,7 @@ public class HomeController {
 	private static final NotificationController notificationController = ApplicationContext.getObject(NotificationController.class);
 	private static final ExternalServerController externalServerController = ApplicationContext.getObject(ExternalServerController.class);
 	private static final NewsCategoryController categoryController = ApplicationContext.getObject(NewsCategoryController.class);
-	private static final CustomisedNewsFeedController customisedNewsFeedController = ApplicationContext.getObject(CustomisedNewsFeedController.class);
+	private static final ArticleReactionController articleReactionController = ApplicationContext.getObject(ArticleReactionController.class);
 
 	public static boolean home() {
 		boolean isExit = false;
@@ -107,7 +107,15 @@ public class HomeController {
 				case ADD_CATEGORY:
 					categoryController.addNewsCategory();
 					break;
-	
+				
+				case VIEW_NOTIFICATION:
+					notificationController.viewNotifications();
+					break;
+					
+				case HIDE_ARTICLES:
+					newsArticlesController.showHideArticleMenu();
+					break;
+					
 				case LOGOUT:
 					authenticationController.logout();
 					break;
@@ -127,15 +135,18 @@ public class HomeController {
 			String choice = InputUtil.readLine(Prompts.ENTER_YOUR_CHOICE);
 			UserMenu selectedOption = UserMenu.getByOptionNumber(choice);
 
+			
 			switch (selectedOption) {
 				case HEADLINES:
 					showHeadlinesMenu();
 					break;
 				case SAVED_ARTICLES:
-					savedArticlesController.showSavedArticles();
+					List<NewsArticle> savedArtilces = savedArticlesController.getSavedArticles();
+					displayNewsArticles(savedArtilces);
 					break;
 				case SEARCH:
-					newsArticlesController.getArticlesByDateRange();
+					List<NewsArticle> searchedArticles = newsArticlesController.getArticlesByText();
+					displayNewsArticles(searchedArticles);
 					break;
 				case NOTIFICATIONS:
 					notificationController.manageNotifications();
@@ -202,16 +213,16 @@ public class HomeController {
 					goToPreviousMenu = true;
 					break;
 				case "3":
-					savedArticlesController.save();
+					savedArticlesController.save(newsArticle.getArticleId());
 					break;
 				case "4":
-					customisedNewsFeedController.likeArticle();
+					articleReactionController.likeArticle(newsArticle.getArticleId());
 					break;
 				case "5":
-					customisedNewsFeedController.disLikeArticle();
+					articleReactionController.dislikeArticle(newsArticle.getArticleId());
 					break;
 				case "6":
-					customisedNewsFeedController.reportArticle();
+					articleReactionController.reportArticle(newsArticle.getArticleId());
 					break;
 				case "7":
 					if (index < newsArticles.size() - 1) {

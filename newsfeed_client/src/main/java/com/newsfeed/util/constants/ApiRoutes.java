@@ -8,4 +8,8 @@ public class ApiRoutes {
 	public static final String SERVER_ROUTE = BASE_URL + "/admin/servers";
 	public static final String ARTICLES_ROUTE = BASE_URL + "/articles";
 	public static final String CATEGORY_ROUTE = BASE_URL + "/categories";
+	public static final String ADMIN_CATEGORY_ROUTE = BASE_URL + "/admin/categories";
+	public static final String SAVED_ARTICLE = BASE_URL + "/users/id/saved-articles";
+	public static final String NOTIFICATION_ROUTE = BASE_URL + "/users/id/notifications";
+	public static final String NOTIFICATIONS_READ = NOTIFICATION_ROUTE + "/read";
 }

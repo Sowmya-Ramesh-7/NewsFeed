@@ -38,4 +38,15 @@ public class NewsCategoryService {
 		return Collections.emptyMap();
 	}
 
+	public boolean addCategory(NewsCategory category) throws IOException, InterruptedException {
+		Map<String, String> headers = HttpRequestBuilder.getAuthHeader();
+		String requestBody = objectMapper.writeValueAsString(category);
+		HttpRequest request = HttpRequestBuilder.buildRequest("POST", ApiRoutes.ADMIN_CATEGORY_ROUTE, headers, requestBody);
+		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+		ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
+
+		System.out.println(apiResponse.getMessage());
+		return apiResponse.isSuccess();
+	}
+
 }

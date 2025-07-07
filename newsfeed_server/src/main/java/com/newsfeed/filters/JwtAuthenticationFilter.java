@@ -25,7 +25,8 @@ import io.jsonwebtoken.Claims;
 public class JwtAuthenticationFilter implements Filter {
 
 	private static final Set<String> EXCLUDED_PATHS = Set.of("/auth/login", "/auth/signup");
-	private static final String ADMIN_PATH_PREFIX = "/admin/servers";
+	private static final String ADMIN_SERVER_PATH_PREFIX = "/admin/servers";
+	private static final String ADMIN_CATEGORY_PATH_PREFIX = "/admin/categories";
 	private ObjectMapper objectMapper;
 
 	@Override
@@ -65,7 +66,8 @@ public class JwtAuthenticationFilter implements Filter {
 			httpRequest.setAttribute("userId", userId);
 			chain.doFilter(request, response);
 
-		} catch (Exception e) {
+		} catch (Exception exception) {
+			exception.printStackTrace();
 			sendUnauthorized(httpResponse);
 		}
 	}
@@ -75,7 +77,7 @@ public class JwtAuthenticationFilter implements Filter {
 	}
 
 	private boolean isAdminRoute(String path) {
-		return path.startsWith(ADMIN_PATH_PREFIX);
+		return path.startsWith(ADMIN_SERVER_PATH_PREFIX) || path.startsWith(ADMIN_CATEGORY_PATH_PREFIX) ;
 	}
 
 	private void sendUnauthorized(HttpServletResponse response) throws IOException {

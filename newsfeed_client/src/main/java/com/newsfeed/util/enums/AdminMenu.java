@@ -7,7 +7,9 @@ public enum AdminMenu {
 	VIEW_ALL_SERVER_DETAILS("2", "View external server details"),
 	EDIT_SERVER_DETAILS("3", "Update/Edit external server details"), 
 	ADD_CATEGORY("4", "Add new News Category"),
-	LOGOUT("5", "Logout");
+	VIEW_NOTIFICATION("5", "View Notifications"),
+	HIDE_ARTICLES("6", "Hide News Articles"),
+	LOGOUT("7", "Logout");
 
 	private final String optionNumber;
 	private final String description;

@@ -40,5 +40,13 @@ public class Messages {
 	public static final String LINE = "_______________________________________________________________________________\n";
 	public static final String FIRST_ARTICLE = "You are on the first article.";
 	public static final String LAST_ARTICLE = "You are on the last article.";
-	
+	public static final String INVALID_CATEGORY = "Invalid category.";
+	public static final String CATEGORY_ADDED_SUCCESSFULLY = "Added new category successfully.";
+	public static final String CATEGORY_ALREADY_EXISTS = "Category already exists.";
+	public static final String ARTICLE_SAVED = "Article saved successfully!";
+	public static final String ARTICLE_ALREADY_SAVED = "You've already saved this article.";
+	public static final String ENTER_THE_SEARCH_QUERY = "Enter the keyword by which you want to search the articles: ";
+	public static final String NO_NOTIFICATIONS = "You have no notifications or You have read it.";
+	public static final String NOTIFICATION_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "------------------N O T I F I C A T I O N S:------------------");
+	public static final String HIDE_ARTICLES_HEADER = String.format(HIGHLIGHT_TEXT, "------------------ Hide News Articles ------------------");
 }

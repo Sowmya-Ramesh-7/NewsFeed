@@ -1,15 +1,24 @@
 package com.newsfeed.controller;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.newsfeed.model.NewsArticle;
+import com.newsfeed.service.SavedArticlesService;
+
 public class SavedArticlesController {
 
-	public void showSavedArticles() {
-		// TODO Auto-generated method stub
-		
-	}
+    private final SavedArticlesService savedArticlesService;
 
-	public void save() {
-		// TODO Auto-generated method stub
-		
-	}
+    public SavedArticlesController(SavedArticlesService savedArticlesService) {
+        this.savedArticlesService = savedArticlesService;
+    }
 
+    public void save(String articleId) throws IOException, InterruptedException {
+        savedArticlesService.saveArticle(articleId);
+    }
+
+    public List<NewsArticle> getSavedArticles() throws IOException, InterruptedException {
+        return savedArticlesService.getSavedArticles();
+    }
 }

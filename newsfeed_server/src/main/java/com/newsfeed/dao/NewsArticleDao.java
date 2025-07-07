@@ -33,7 +33,6 @@ public class NewsArticleDao {
 			}
 			preparedStatement.executeBatch();
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
-			exception.printStackTrace();
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
 	}
@@ -48,7 +47,7 @@ public class NewsArticleDao {
 
 	public List<NewsArticle> getArticlesByFilters(LocalDate start, LocalDate end, String category) {
 		List<Object> parameters = new ArrayList<>();
-		StringBuilder query = new StringBuilder("SELECT * FROM news_articles WHERE 1=1");
+		StringBuilder query = new StringBuilder("SELECT * FROM news_articles WHERE is_hidden = false ");
 
 		if (start != null && end != null) {
 			query.append(" AND published_date BETWEEN ? AND ?");
@@ -74,14 +73,32 @@ public class NewsArticleDao {
 			while (resultSet.next()) {
 				NewsArticle article = getArticlefromResultSet(resultSet);
 				articles.add(article);
-
 			}
 			return articles;
 
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
-			exception.printStackTrace();
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
+	}
+
+	public List<NewsArticle> getArticlesByText(String keyword) {
+		List<NewsArticle> articles = new ArrayList<>();
+		String query = Query.SEARCH_BY_ARTILCES_KEYWORD;
+
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+			preparedStatement.setString(1, keyword);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				NewsArticle article = getArticlefromResultSet(resultSet);
+				articles.add(article);
+			}
+
+		} catch (SQLException | ClassNotFoundException | IOException exception) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+		return articles;
 	}
 
 	private NewsArticle getArticlefromResultSet(ResultSet resultSet) throws SQLException {
@@ -98,8 +115,35 @@ public class NewsArticleDao {
 		if (timestamp != null) {
 			article.setPublishedDate(timestamp.toLocalDateTime());
 		}
-
 		return article;
 	}
+
+    public boolean hideArticleById(String articleId) {
+        String query = Query.HIDE_ARTICLE_BY_ID;
+        return executeUpdate(query, articleId);
+    }
+
+    public boolean hideArticlesByCategory(String categoryId) {
+        String query = Query.HIDE_ARTICLE_BY_CATEGORY_ID;
+        return executeUpdate(query, categoryId);
+    }
+
+    public boolean hideArticlesByKeyword(String keyword) {
+        String query = Query.HIDE_ARTICLE_BY_KEYWORD;
+        return executeUpdate(query, keyword);
+    }
+
+    private boolean executeUpdate(String query, String value) {
+    	int updatedCount = 0;
+    	try (Connection connection = DBConnect.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        	preparedStatement.setString(1, value);
+        	updatedCount = preparedStatement.executeUpdate();
+        } catch (SQLException | ClassNotFoundException | IOException exception) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+        
+        return updatedCount > 0;
+    }
 
 }

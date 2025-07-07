@@ -16,4 +16,8 @@ public class NewsCategoryService {
     public Map<String, NewsCategory> getAllCategories() {
         return categoryDao.getAllCategories();
     }
+
+    public boolean addCategory(NewsCategory category) {
+        return categoryDao.addCategory(category);
+    }
 }

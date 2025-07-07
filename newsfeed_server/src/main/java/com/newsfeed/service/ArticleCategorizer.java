@@ -8,7 +8,7 @@ import com.newsfeed.model.NewsCategory;
 
 public class ArticleCategorizer {
 
-    private static final String DEFAULT_CATEGORY_ID = "CATEGORY_GENERAL";
+    private static final String DEFAULT_CATEGORY_ID = "CATEGORY_0";
     private final NewsCategoryDao categoryDao;
 
     public ArticleCategorizer(NewsCategoryDao categoryDao){

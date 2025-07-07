@@ -10,6 +10,7 @@ public class NotificationHistory {
 	private String title;
 	private LocalDateTime sentAt;
 	private boolean isRead;
+	private String email;
 
 	public String getNotificationId() {
 		return notificationId;
@@ -65,5 +66,13 @@ public class NotificationHistory {
 
 	public void setRead(boolean isRead) {
 		this.isRead = isRead;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String emailAddress) {
+		this.email = emailAddress;
 	}
 }

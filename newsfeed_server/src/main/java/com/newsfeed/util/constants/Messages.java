@@ -16,11 +16,24 @@ public class Messages {
 	public static final String INVALID_API_NAME = "Invalid API Name";
 	public static final String INVALID_SERVER_ID = "Invalid Server Id.";
 	public static final String INVALID_SERVER_DETAILS = "Invalid Server Details";
-	public static final String FORBIDDEN_REQUEST = "Access denied: Admins only";
-	public static final String EXTERNAL_API_ERROR = "Failed to get data from server";
-	public static final String FOUND_ARTICLES = "Articles fetched successfully";
+	public static final String FORBIDDEN_REQUEST = "Access denied: Admins only.";
+	public static final String EXTERNAL_API_ERROR = "Failed to get data from server.";
+	public static final String FOUND_ARTICLES = "Articles fetched successfully.";
 	public static final String NO_ARTICLES_FOUND = "No Articles found.";
 	public static final String GOT_ALL_CATEGORIES_SUCCESSFULLY = "Categories Found successfully.";
 	public static final String FAILED_TO_GET_CATEGORIES = "Failed to get the News Categoryes";
+	public static final String FAILED_TO_ADD_CATEGORY = "Failed to add category.";
+	public static final String ARTICLE_ID_REQUIRED = "Article ID is required.";
+	public static final String ARTICLE_SAVED_SUCCESSFULLY = "Article save successfully !";
+	public static final String ARTICLE_ALREADY_SAVED = "You have already saved the article.";
+	public static final String FOUND_SAVED_ARTICLES = "Saved articles fetched successfully.";
+	public static final String NO_SAVED_ARTICLES = "You don't have any articles saved.";
+	public static final String INVALID_REACTION_TYPE = "Invalid reaction on article.";
+	public static final String FETCHED_NOTIFICATIONS_SUCCESSFULLY = "You have unread notifications!";
+	public static final String NO_NOTIFICATIONS = "You have either read all notifications or not got any!";
+	public static final String ARTICLE_HIDDEN_SUCCESS = "Article(s) successfully hidden.";
+    public static final String ARTICLE_NOT_FOUND_OR_ALREADY_HIDDEN = "No matching article(s) found or already hidden.";
+    public static final String HIDE_CRITERIA_REQUIRED = "Provide either articleId, categoryId or keyword.";
+
 	
 }

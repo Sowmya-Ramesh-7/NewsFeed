@@ -7,6 +7,8 @@ import com.newsfeed.util.constants.Query;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDao {
@@ -52,5 +54,26 @@ public class UserDao {
 		}
 
 		return Optional.empty();
+	}
+
+	public List<User> getAllAdmins() {
+		List<User> admins = new ArrayList<User>();
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(Query.SELECT_ADMINS)) {
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				User user = new User();
+				user.setUserId(resultSet.getString("user_id"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getLong("phone_number"));
+				user.setEmailAddress(resultSet.getString("email_address"));
+				user.setIsAdmin(resultSet.getBoolean("is_admin"));
+				admins.add(user);
+			}
+		} catch (SQLException | ClassNotFoundException | IOException exception) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+
+		return admins;
 	}
 }
