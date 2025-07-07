@@ -6,8 +6,9 @@ public enum UserMenu {
     HEADLINES("1", "Headlines"),
     SAVED_ARTICLES("2", "Saved Articles"),
     SEARCH("3", "Search"),
-    NOTIFICATIONS("4", "Notifications"),
-    LOGOUT("5", "Logout");
+    CUSTOMIZED_ARTICLES_HISTORY("4", "View Customized Articles History"),
+    NOTIFICATIONS("5", "Notifications"),
+    LOGOUT("6", "Logout");
 
     private final String optionNumber;
     private final String description;

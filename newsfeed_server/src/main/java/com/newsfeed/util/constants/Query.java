@@ -1,6 +1,27 @@
 package com.newsfeed.util.constants;
 
 public class Query {
+	public static final String FETCH_NEWS_HISTORY_BASED_ON_PRIORITY = """
+			SELECT article.*,
+			       IF(reaction.reaction_type IN ('LIKE', 'SAVE'), 1, 0) AS reaction_priority,
+			       IF(saved.article_id IS NOT NULL, 1, 0) AS saved_priority,
+			       IF(category.category_id IN (
+			           SELECT preference.category_id
+			           FROM user_preferences preference
+			           WHERE preference.user_id = ? AND preference.is_enabled = TRUE
+			       ), 1, 0) AS category_priority
+			FROM article_read_history history
+			JOIN news_articles article ON history.article_id = article.article_id
+			LEFT JOIN user_article_reaction reaction
+			       ON reaction.article_id = article.article_id AND reaction.user_id = ?
+			LEFT JOIN saved_articles saved
+			       ON saved.article_id = article.article_id AND saved.user_id = ?
+			LEFT JOIN news_categories category
+			       ON article.category_id = category.category_id
+			WHERE history.user_id = ?
+			ORDER BY (reaction_priority + saved_priority + category_priority) DESC, history.read_at DESC
+			""";
+	
 	public static final String INSERT_USER = "INSERT INTO users (user_id, name, phone_number, email_address, is_admin, password) VALUES (?, ?, ?, ?, ?, ?)";
 	public static final String SELECT_BY_EMAIL = "SELECT * FROM users WHERE email_address = ?";
 	public static final String INSERT_INTO_NEWS_ARTICLES = "INSERT IGNORE INTO news_articles (article_id, title, content, source_link, article_url, category_id, image_url, published_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -26,26 +47,6 @@ public class Query {
 	public static final String INSERT_NOTIFICATION_PREFERENCES = "INSERT INTO user_preferences (user_id, category_id, is_enabled) VALUES (?, ?, ?)";
 	public static final String UPSERT_CATEGORY_NOTIFICATION_PREFERENCES = "INSERT INTO user_preferences (user_id, category_id, is_enabled) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)";
 	public static final String GET_CATEGORY_PREFERENCES_BY_USER_ID = "SELECT category_id, is_enabled FROM user_preferences WHERE user_id = ?";
-	public static final String FETCH_NEWS_HISTORY_BASED_ON_PRIORITY = """
-			SELECT article.*,
-			       IF(reaction.reaction_type IN ('LIKE', 'SAVE'), 1, 0) AS reaction_priority,
-			       IF(saved.article_id IS NOT NULL, 1, 0) AS saved_priority,
-			       IF(category.category_id IN (
-			           SELECT preference.category_id
-			           FROM notification_preferences preference
-			           WHERE preference.user_id = ? AND preference.is_enabled = TRUE
-			       ), 1, 0) AS category_priority
-			FROM article_read_history history
-			JOIN news_articles article ON history.article_id = article.article_id
-			LEFT JOIN article_reactions reaction
-			       ON reaction.article_id = article.article_id AND reaction.user_id = ?
-			LEFT JOIN saved_articles saved
-			       ON saved.article_id = article.article_id AND saved.user_id = ?
-			LEFT JOIN news_categories category
-			       ON article.category_id = category.category_id
-			WHERE history.user_id = ?
-			ORDER BY (reaction_priority + saved_priority + category_priority) DESC, history.read_at DESC
-			""";
-	public static final String INSERT_INTO_ARTICLE_READ_HISTORY = "INSERT INTO article_read_history (user_id, article_id, read_at) VALUES (?, ?, ?)";
+	public static final String INSERT_INTO_ARTICLE_READ_HISTORY = "INSERT IGNORE INTO article_read_history (user_id, article_id, read_at) VALUES (?, ?, ?)";
 
 }

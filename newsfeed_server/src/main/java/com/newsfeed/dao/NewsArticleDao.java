@@ -81,7 +81,7 @@ public class NewsArticleDao {
 		}
 	}
 
-    public List<NewsArticle> getPersonalizedHistory(String userId) {
+    public List<NewsArticle> getCustomizedHistory(String userId) {
         List<NewsArticle> articles = new ArrayList<>();
 
         try (Connection connection = DBConnect.getConnection();
@@ -99,6 +99,7 @@ public class NewsArticleDao {
             }
 
         } catch (SQLException | ClassNotFoundException | IOException exception) {
+        	exception.printStackTrace();
             throw new ServerException(Messages.DATABASE_ERROR);
         }
 
@@ -169,5 +170,4 @@ public class NewsArticleDao {
 
 		return updatedCount > 0;
 	}
-
 }

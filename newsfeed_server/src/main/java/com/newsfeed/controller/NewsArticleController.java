@@ -40,7 +40,8 @@ public class NewsArticleController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
-
+		
+		String userId = (String) request.getAttribute("userId");
 		String start = request.getParameter("start");
 		String end = request.getParameter("end");
 		String category = request.getParameter("category");
@@ -48,7 +49,10 @@ public class NewsArticleController extends HttpServlet {
 		ApiResponse apiResponse;
 		try {
 			List<NewsArticle> articles = new ArrayList<NewsArticle>();
-			if (searchQuery != null) {
+			String pathInfo = request.getPathInfo();
+			if (pathInfo != null && pathInfo.endsWith("customized")) {
+				articles = newsArticleService.getCustomizedArticlesHistory(userId);
+			} else if (searchQuery != null) {
 				articles = newsArticleService.getArticlesByText(searchQuery);
 			} else {
 				articles = newsArticleService.getArticles(start, end, category);

@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.newsfeed.model.NewsArticle;
 import com.newsfeed.service.ArticleHistoryService;
@@ -151,6 +152,10 @@ public class HomeController {
 					List<NewsArticle> searchedArticles = newsArticlesController.getArticlesByText();
 					displayNewsArticles(searchedArticles);
 					break;
+				case CUSTOMIZED_ARTICLES_HISTORY:
+					List<NewsArticle> customizedArticles = newsArticlesController.getMyCustomizedArticles();
+					displayNewsArticles(customizedArticles);
+					break;
 				case NOTIFICATIONS:
 					notificationController.manageNotifications();
 					break;
@@ -193,7 +198,7 @@ public class HomeController {
 	    }
 
 	    int index = 0;
-	    List<String> readArticleIds = new ArrayList<String>();
+	    Set<String> readArticleIds = new HashSet<String>();
 
 	    while (index >= 0 && index < newsArticles.size()) {
 	        NewsArticle newsArticle = newsArticles.get(index);
@@ -206,9 +211,7 @@ public class HomeController {
 	        displayArticlesMenu();
 	        System.out.println(newsArticle.toString());
 
-	        if (!readArticleIds.contains(newsArticle.getArticleId())) {
-	            readArticleIds.add(newsArticle.getArticleId());
-	        }
+	        readArticleIds.add(newsArticle.getArticleId());
 
 	        String choice = InputUtil.readLine(Prompts.CHOOSE_OPTION);
 

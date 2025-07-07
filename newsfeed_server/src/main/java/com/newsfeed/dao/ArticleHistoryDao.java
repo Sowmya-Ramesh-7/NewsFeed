@@ -6,6 +6,7 @@ import com.newsfeed.util.constants.Query;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ArticleHistoryDao {
@@ -19,12 +20,14 @@ public class ArticleHistoryDao {
 			for (String articleId : articleIds) {
 				preparedStatement.setString(1, userId);
 				preparedStatement.setString(2, articleId);
+				preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
 				preparedStatement.addBatch();
 			}
 
 			preparedStatement.executeBatch();
 
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
+			exception.printStackTrace();
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
 	}

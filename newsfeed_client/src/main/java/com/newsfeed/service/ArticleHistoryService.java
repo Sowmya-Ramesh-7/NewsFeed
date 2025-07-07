@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.model.ApiResponse;
@@ -21,9 +22,9 @@ public class ArticleHistoryService {
 		this.objectMapper = objectMapper;
 		this.httpClient = httpClient;
 	}
-	public void markArticlesAsRead(List<String> articleIds) throws IOException, InterruptedException {
+	public void markArticlesAsRead(Set<String> readArticleIds) throws IOException, InterruptedException {
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("articleIds", articleIds);
+        requestBody.put("articleIds", readArticleIds);
 
         HttpRequest request = HttpRequestBuilder.buildRequest("POST", ApiRoutes.ARTICLE_HISTORY_ROUTE, HttpRequestBuilder.getAuthHeader(), objectMapper.writeValueAsString(requestBody));
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

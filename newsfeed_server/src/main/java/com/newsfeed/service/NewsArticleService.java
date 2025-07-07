@@ -51,4 +51,8 @@ public class NewsArticleService {
 		return Collections.emptyList();
 
 	}
+
+	public List<NewsArticle> getCustomizedArticlesHistory(String userId) {
+		return newsArticleDao.getCustomizedHistory(userId);
+	}
 }

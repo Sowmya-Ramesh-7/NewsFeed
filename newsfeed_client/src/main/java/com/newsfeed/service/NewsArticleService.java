@@ -52,6 +52,11 @@ public class NewsArticleService {
 		String url = ApiRoutes.ARTICLES_ROUTE + "?start=" + startDate + "&end=" + endDate + "&category=" + categoryId;
 		return getArticles(url);
 	}
+	
+	public List<NewsArticle> getMyCustomizedArticles() throws IOException, InterruptedException {
+		String url = ApiRoutes.ARTICLES_ROUTE + "/customized";
+		return getArticles(url);
+	}
 
 	private List<NewsArticle> getArticles(String url) throws IOException, InterruptedException {
 		Map<String, String> headers = HttpRequestBuilder.getAuthHeader();

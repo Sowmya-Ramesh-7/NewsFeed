@@ -85,4 +85,8 @@ public class NewsArticlesController {
         String keyword = InputUtil.readLine("Enter Keyword to hide matching articles: ");
         newsArticleService.hideArticlesByKeyword(keyword);
     }
+
+	public List<NewsArticle> getMyCustomizedArticles() throws IOException, InterruptedException {
+		return newsArticleService.getMyCustomizedArticles();
+	}
 }
