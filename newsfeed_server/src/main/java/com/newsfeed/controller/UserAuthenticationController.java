@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,24 +43,28 @@ public class UserAuthenticationController extends HttpServlet {
 			objectMapper.writeValue(response.getWriter(), ApiResponse.error(Messages.ENDPOINT_NOT_FOUND));
 			return;
 		}
-
-		switch (path) {
-		case "/signup":
-			handleSignup(request, response);
-			break;
-		case "/login":
-			handleLogin(request, response);
-			break;
-		case "/logout":
-			handleLogout(request, response);
-			break;
-		default:
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			objectMapper.writeValue(response.getWriter(), ApiResponse.error(Messages.ENDPOINT_NOT_FOUND));
+		try {
+			switch (path) {
+				case "/signup":
+						handleSignup(request, response);
+					break;
+				case "/login":
+					handleLogin(request, response);
+					break;
+				case "/logout":
+					handleLogout(request, response);
+					break;
+				default:
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					objectMapper.writeValue(response.getWriter(), ApiResponse.error(Messages.ENDPOINT_NOT_FOUND));
+			}
+		} catch (NoSuchAlgorithmException | IOException exception) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			objectMapper.writeValue(response.getWriter(), ApiResponse.error(exception.getMessage()));
 		}
 	}
 
-	private void handleSignup(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void handleSignup(HttpServletRequest request, HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
 		User user = objectMapper.readValue(request.getReader(), User.class);
 		String userId = userAuthenticationService.signup(user);
 
@@ -79,7 +84,7 @@ public class UserAuthenticationController extends HttpServlet {
 		objectMapper.writeValue(response.getWriter(), signupResponse);
 	}
 
-	private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
 		User user = objectMapper.readValue(request.getReader(), User.class);
 		Map<String, String> loginResponse = userAuthenticationService.login(user.getEmailAddress(), user.getPassword());
 

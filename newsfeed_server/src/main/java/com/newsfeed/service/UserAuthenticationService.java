@@ -1,11 +1,13 @@
 package com.newsfeed.service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import com.newsfeed.dao.UserDao;
 import com.newsfeed.model.User;
+import com.newsfeed.util.EncryptString;
 import com.newsfeed.util.IdGenerator;
 import com.newsfeed.util.JwtUtil;
 
@@ -16,7 +18,7 @@ public class UserAuthenticationService {
 		this.userDao = userDao;
 	}
 
-	public String signup(User user) {
+	public String signup(User user) throws NoSuchAlgorithmException {
 		Optional<User> userOptional = userDao.findByEmail(user.getEmailAddress());
 
 		if (userOptional.isPresent()) {
@@ -24,14 +26,16 @@ public class UserAuthenticationService {
 		}
 		user.setIsAdmin(false);
 		user.setUserId(IdGenerator.generate("User"));
+		String encryptedPassword = EncryptString.encrypt(user.getPassword());
+        user.setPassword(encryptedPassword);
 		userDao.add(user);
 		return user.getUserId();
 	}
 
-	public Map<String, String> login(String email, String password) {
+	public Map<String, String> login(String email, String password) throws NoSuchAlgorithmException {
 		Optional<User> existingUser = userDao.findByEmail(email);
 		Map<String, String> loginResponse = new HashMap<String, String>();
-		if (existingUser.isPresent() && existingUser.get().getPassword().equals(password)) {
+		if (existingUser.isPresent() && existingUser.get().getPassword().equals(EncryptString.encrypt(password))) {
 			User user = existingUser.get();
 			String token = JwtUtil.generateToken(user);
 			loginResponse.put("token", token);
