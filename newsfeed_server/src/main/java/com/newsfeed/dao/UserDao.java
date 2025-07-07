@@ -8,7 +8,9 @@ import com.newsfeed.util.constants.Query;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class UserDao {
@@ -76,4 +78,24 @@ public class UserDao {
 
 		return admins;
 	}
+	
+	public Map<String, String> getUsersWithEnabledPreferencesAndEmails() {
+	    String query = Query.GET_USER_ENABLED_NOTIFICATION;
+	    Map<String, String> userEmails = new HashMap<String, String>();
+
+	    try (Connection connection = DBConnect.getConnection();
+	         PreparedStatement ps = connection.prepareStatement(query);
+	         ResultSet resultSet = ps.executeQuery()) {
+
+	        while (resultSet.next()) {
+	            userEmails.put(resultSet.getString("user_id"), resultSet.getString("email_address"));
+	        }
+
+	    } catch (Exception exception) {
+	        throw new ServerException(Messages.DATABASE_ERROR);
+	    }
+
+	    return userEmails;
+	}
+
 }

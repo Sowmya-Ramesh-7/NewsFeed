@@ -7,7 +7,7 @@ public class Messages {
 	public static final String INVALID_CREDENTIALS = "Invalid email or password.";
 	public static final String ENDPOINT_NOT_FOUND = "Invalid request. Please check the URL.";
 	public static final String FAILED_LOAD_DATA_FROM_SERVER = "Failed Load Data from Server.";
-	public static final String DATABASE_ERROR = "Failed to fetch data from our Database.";
+	public static final String DATABASE_ERROR = "Failed to update/fetch data from our Database.";
 	public static final String UNAUTHORIZED = "Please login and try again.";
 	public static final String LOGOUT_SUCCESS = "Logout Successful";
 	public static final String GOT_SERVER_DETAILS_SUCESSFULLY = "Fetched server details sucessfully.";

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,4 +74,29 @@ public class NotificationPrefernecesDao {
 	    }
 	    return preferences;
 	}
+
+	public Map<String, List<String>> getAllUserCategoryPreferences() {
+	    Map<String, List<String>> userPreferencesMap = new HashMap<>();
+
+	    String query = Query.GET_ENABLED_NOTIFICATION_CATEGORY_FOR_USER;
+
+	    try (Connection connection = DBConnect.getConnection();
+	         PreparedStatement preparedStatement = connection.prepareStatement(query);
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+	        while (resultSet.next()) {
+	            String userId = resultSet.getString("user_id");
+	            String categoryId = resultSet.getString("category_id");
+
+	            userPreferencesMap.computeIfAbsent(userId, key -> new ArrayList<>()).add(categoryId);
+	        }
+
+	    } catch (SQLException | IOException | ClassNotFoundException exception) {
+	        exception.printStackTrace();
+	        throw new ServerException(Messages.DATABASE_ERROR);
+	    }
+
+	    return userPreferencesMap;
+	}
+
 }

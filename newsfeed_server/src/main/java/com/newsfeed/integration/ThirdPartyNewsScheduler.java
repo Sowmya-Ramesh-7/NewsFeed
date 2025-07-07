@@ -3,6 +3,7 @@ package com.newsfeed.integration;
 import com.newsfeed.model.ExternalServer;
 import com.newsfeed.model.NewsArticle;
 import com.newsfeed.service.ExternalServerService;
+import com.newsfeed.service.NotificationService;
 import com.newsfeed.util.ApplicationContext;
 
 import java.util.List;
@@ -15,9 +16,11 @@ public class ThirdPartyNewsScheduler {
 			.getObject(ScheduledExecutorService.class);
 	
 	private final ExternalServerService serverService;
+	private final NotificationService notificationService;
 
-	public ThirdPartyNewsScheduler(ExternalServerService serverService) {
+	public ThirdPartyNewsScheduler(ExternalServerService serverService, NotificationService notificationService) {
 		this.serverService = serverService;
+		this.notificationService = notificationService;
 	}
 
 	public void scheduleNewsFetchTasks() {
@@ -36,13 +39,15 @@ public class ThirdPartyNewsScheduler {
 
 			try {
 				List<NewsArticle> articles = fetcher.fetchArticles(server);
-
+				
 				fetcher.saveArticles(articles);
+				notificationService.generateNotifications(articles);
 				serverService.updateLastAccessed(server.getServerId());
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Failed to fetch from " + server.getApiName() + ": " + e.getMessage());
+			} catch (Exception excetpion) {
+				excetpion.printStackTrace();
+				System.err.println("Failed to fetch from " + server.getApiName() + ": " + excetpion.getMessage());
 			}
 		}
+		
 	}
 }

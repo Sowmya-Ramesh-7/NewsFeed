@@ -48,5 +48,6 @@ public class Query {
 	public static final String UPSERT_CATEGORY_NOTIFICATION_PREFERENCES = "INSERT INTO user_preferences (user_id, category_id, is_enabled) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)";
 	public static final String GET_CATEGORY_PREFERENCES_BY_USER_ID = "SELECT category_id, is_enabled FROM user_preferences WHERE user_id = ?";
 	public static final String INSERT_INTO_ARTICLE_READ_HISTORY = "INSERT IGNORE INTO article_read_history (user_id, article_id, read_at) VALUES (?, ?, ?)";
-
+	public static final String GET_USER_ENABLED_NOTIFICATION = "SELECT DISTINCT user.user_id, user.email_address FROM users user JOIN user_preferences preference ON user.user_id = preference.user_id WHERE preference.is_enabled = TRUE";
+	public static final String GET_ENABLED_NOTIFICATION_CATEGORY_FOR_USER = "SELECT user_id, category_id FROM user_preferences WHERE is_enabled = TRUE";
 }
