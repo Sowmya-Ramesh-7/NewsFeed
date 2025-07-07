@@ -32,7 +32,6 @@ public class NewsArticlesController {
             System.out.println(Messages.START_DATE_CANNOT_BE_AFTER_END_DATE);
             return Collections.emptyList();
         }
-        
         String categoryId = newsCategoryController.getCategoryInputFromUser();
         
 	    return newsArticleService.getArticlesByFilters(startDate, endDate, categoryId);

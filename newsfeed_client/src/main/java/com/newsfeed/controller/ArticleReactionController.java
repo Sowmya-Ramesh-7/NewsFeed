@@ -6,21 +6,21 @@ import java.io.IOException;
 
 public class ArticleReactionController {
 
-    private ArticleReactionService articleReactionService;
-    
-    public ArticleReactionController(ArticleReactionService articleReactionService){
-    	this.articleReactionService = articleReactionService;
-    }
-    
-    public void likeArticle(String articleId) throws IOException {
-    	articleReactionService.likeArticle(articleId);
-    }
+	private ArticleReactionService articleReactionService;
 
-    public void dislikeArticle(String articleId) throws IOException {
-    	articleReactionService.dislikeArticle(articleId);
-    }
+	public ArticleReactionController(ArticleReactionService articleReactionService) {
+		this.articleReactionService = articleReactionService;
+	}
 
-    public void reportArticle(String articleId) throws IOException {
-    	articleReactionService.reportArticle(articleId);
-    }
+	public void likeArticle(String articleId) throws IOException {
+		articleReactionService.likeArticle(articleId);
+	}
+
+	public void dislikeArticle(String articleId) throws IOException {
+		articleReactionService.dislikeArticle(articleId);
+	}
+
+	public void reportArticle(String articleId) throws IOException {
+		articleReactionService.reportArticle(articleId);
+	}
 }

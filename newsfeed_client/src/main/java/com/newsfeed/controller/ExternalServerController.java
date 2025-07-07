@@ -24,9 +24,10 @@ public class ExternalServerController {
 		}
 
 		System.out.println(Messages.LIST_OF_SERVERS);
-		for(ExternalServer server : servers) {
+		for (ExternalServer server : servers) {
 			String status = server.isActive() ? "Active" : "Not Active";
-			System.out.println(server.getServerId() + ". " + server.getApiName() + " - " + status + " | Last accessed: " + server.getLastAccessed());
+			System.out.println(server.getServerId() + ". " + server.getApiName() + " - " + status + " | Last accessed: "
+					+ server.getLastAccessed());
 		}
 	}
 
@@ -34,7 +35,7 @@ public class ExternalServerController {
 		List<ExternalServer> servers = externalServerService.getAllServers();
 		if (!servers.isEmpty()) {
 			System.out.println("List of external server details:");
-			servers.forEach((server)->{
+			servers.forEach((server) -> {
 				System.out.println(server.getServerId() + ". " + server.getApiName() + " - " + server.getApiKey());
 			});
 		}
@@ -47,6 +48,6 @@ public class ExternalServerController {
 		server.setApiKey(updatedApiKey);
 		server.setServerId(serverId);
 		externalServerService.updateServerDetails(server);
-		
+
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.dto.ApiResponse;
 import com.newsfeed.model.User;
+import com.newsfeed.service.NotificationPreferencesService;
 import com.newsfeed.service.UserAuthenticationService;
 import com.newsfeed.util.ApplicationContext;
 import com.newsfeed.util.constants.Messages;
@@ -20,11 +21,13 @@ public class UserAuthenticationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ObjectMapper objectMapper;
 	private UserAuthenticationService userAuthenticationService;
+	private NotificationPreferencesService notificationPreferencesService;
 
 	@Override
 	public void init() throws ServletException {
 		this.objectMapper = ApplicationContext.getObject(ObjectMapper.class);
 		this.userAuthenticationService = ApplicationContext.getObject(UserAuthenticationService.class);
+		this.notificationPreferencesService = ApplicationContext.getObject(NotificationPreferencesService.class);
 	}
 
 	@Override
@@ -66,6 +69,7 @@ public class UserAuthenticationController extends HttpServlet {
 		if (!userId.isBlank()) {
 			statusCode = HttpServletResponse.SC_CREATED;
 			signupResponse = ApiResponse.success(String.format(Messages.SIGNUP_SUCCESS, userId));
+			notificationPreferencesService.setDefaultPreferences(userId);
 		} else {
 			statusCode = HttpServletResponse.SC_BAD_REQUEST;
 			signupResponse = ApiResponse.error(Messages.USER_ALREADY_EXISTS);
@@ -95,8 +99,8 @@ public class UserAuthenticationController extends HttpServlet {
 	}
 
 	private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    response.setStatus(HttpServletResponse.SC_OK);
-	    ApiResponse logoutResponse = ApiResponse.success(Messages.LOGOUT_SUCCESS);
-	    objectMapper.writeValue(response.getWriter(), logoutResponse);
+		response.setStatus(HttpServletResponse.SC_OK);
+		ApiResponse logoutResponse = ApiResponse.success(Messages.LOGOUT_SUCCESS);
+		objectMapper.writeValue(response.getWriter(), logoutResponse);
 	}
 }

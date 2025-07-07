@@ -32,8 +32,9 @@ public class Messages {
 	public static final String FETCHED_NOTIFICATIONS_SUCCESSFULLY = "You have unread notifications!";
 	public static final String NO_NOTIFICATIONS = "You have either read all notifications or not got any!";
 	public static final String ARTICLE_HIDDEN_SUCCESS = "Article(s) successfully hidden.";
-    public static final String ARTICLE_NOT_FOUND_OR_ALREADY_HIDDEN = "No matching article(s) found or already hidden.";
-    public static final String HIDE_CRITERIA_REQUIRED = "Provide either articleId, categoryId or keyword.";
-
-	
+	public static final String ARTICLE_NOT_FOUND_OR_ALREADY_HIDDEN = "No matching article(s) found or already hidden.";
+	public static final String HIDE_CRITERIA_REQUIRED = "Provide either articleId, categoryId or keyword.";
+	public static final String FETCHED_PREFERENCES = "Notifications preferences fetched successfully.";
+	public static final String NOTIFICATION_CONFIGURED = "Notification preference updated.";
+	public static final String ARTICLE_MARKED_AS_READ = "Article(s) marked as read successfully.";
 }

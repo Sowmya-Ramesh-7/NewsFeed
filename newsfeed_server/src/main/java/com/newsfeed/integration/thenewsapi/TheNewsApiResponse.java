@@ -7,13 +7,13 @@ import com.newsfeed.model.NewsArticle;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TheNewsApiResponse {
-    private List<NewsArticle> data;
+	private List<NewsArticle> data;
 
-    public List<NewsArticle> getData() {
-        return data;
-    }
+	public List<NewsArticle> getData() {
+		return data;
+	}
 
-    public void setData(List<NewsArticle> data) {
-        this.data = data;
-    }
+	public void setData(List<NewsArticle> data) {
+		this.data = data;
+	}
 }

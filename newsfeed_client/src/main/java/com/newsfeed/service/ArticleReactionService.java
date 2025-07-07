@@ -9,14 +9,16 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.model.ApiResponse;
-import com.newsfeed.util.ApplicationContext;
 import com.newsfeed.util.constants.ApiRoutes;
 
 public class ArticleReactionService {
+	private ObjectMapper objectMapper;
+	private HttpClient httpClient;
 
-	private final HttpClient httpClient = HttpClient.newHttpClient();
-	private final ObjectMapper objectMapper = ApplicationContext.getObject(ObjectMapper.class);
-
+	public ArticleReactionService(ObjectMapper objectMapper, HttpClient httpClient) {
+		this.objectMapper = objectMapper;
+		this.httpClient = httpClient;
+	}
 	public boolean likeArticle(String articleId) {
 		Map<String, String> reaction = new HashMap<String, String>();
 		reaction.put("reaction", "like");
@@ -28,7 +30,7 @@ public class ArticleReactionService {
 		reaction.put("reaction", "dislike");
 		return sendReaction(articleId, reaction);
 	}
-	
+
 	public boolean reportArticle(String articleId) {
 		Map<String, String> reaction = new HashMap<String, String>();
 		reaction.put("reaction", "report");

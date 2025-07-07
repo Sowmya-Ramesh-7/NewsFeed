@@ -24,7 +24,7 @@ public class UserDao {
 			preparedStatement.setBoolean(5, user.getIsAdmin());
 			preparedStatement.setString(6, user.getPassword());
 
-			return preparedStatement.executeUpdate()>0;
+			return preparedStatement.executeUpdate() > 0;
 
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
 			throw new ServerException(Messages.DATABASE_ERROR);

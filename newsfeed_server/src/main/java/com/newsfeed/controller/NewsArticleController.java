@@ -53,7 +53,7 @@ public class NewsArticleController extends HttpServlet {
 			} else {
 				articles = newsArticleService.getArticles(start, end, category);
 			}
-			
+
 			if (articles.size() == 0) {
 				apiResponse = ApiResponse.success(Messages.NO_ARTICLES_FOUND, articles);
 			} else {
@@ -111,37 +111,35 @@ public class NewsArticleController extends HttpServlet {
 			objectMapper.writeValue(response.getWriter(), ApiResponse.error(exception.getMessage()));
 		}
 	}
-	
+
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    response.setContentType("application/json");
+		response.setContentType("application/json");
 
-	    try {
-	        Map<String, String> requestBody = objectMapper.readValue(request.getReader(), Map.class);
-	        String articleId = requestBody.get("articleId");
-	        String categoryId = requestBody.get("categoryId");
-	        String keyword = requestBody.get("keyword");
-	        boolean updated = false;
-	        if (articleId != null) {
-	        	updated = newsArticleService.hideArticleById(articleId);
-	        }else if (categoryId != null) {
-	            updated = newsArticleService.hideArticlesByCategory(categoryId);
-	        }else if (keyword != null) {
-	            updated = newsArticleService.hideArticlesByKeyword(keyword);
-	        }else {
-	        	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		        objectMapper.writeValue(response.getWriter(), ApiResponse.error(Messages.HIDE_CRITERIA_REQUIRED));
-		        return;
-	        }
-	        String message = updated ? Messages.ARTICLE_HIDDEN_SUCCESS : Messages.ARTICLE_NOT_FOUND_OR_ALREADY_HIDDEN;
-            objectMapper.writeValue(response.getWriter(), ApiResponse.success(message));
-            return;
+		try {
+			Map<String, String> requestBody = objectMapper.readValue(request.getReader(), Map.class);
+			String articleId = requestBody.get("articleId");
+			String categoryId = requestBody.get("categoryId");
+			String keyword = requestBody.get("keyword");
+			boolean updated = false;
+			if (articleId != null) {
+				updated = newsArticleService.hideArticleById(articleId);
+			} else if (categoryId != null) {
+				updated = newsArticleService.hideArticlesByCategory(categoryId);
+			} else if (keyword != null) {
+				updated = newsArticleService.hideArticlesByKeyword(keyword);
+			} else {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				objectMapper.writeValue(response.getWriter(), ApiResponse.error(Messages.HIDE_CRITERIA_REQUIRED));
+				return;
+			}
+			String message = updated ? Messages.ARTICLE_HIDDEN_SUCCESS : Messages.ARTICLE_NOT_FOUND_OR_ALREADY_HIDDEN;
+			objectMapper.writeValue(response.getWriter(), ApiResponse.success(message));
+			return;
 
-	    } catch (Exception exception) {
-	        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	        objectMapper.writeValue(response.getWriter(), ApiResponse.error(exception.getMessage()));
-	    }
+		} catch (Exception exception) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			objectMapper.writeValue(response.getWriter(), ApiResponse.error(exception.getMessage()));
+		}
 	}
-
-
 }

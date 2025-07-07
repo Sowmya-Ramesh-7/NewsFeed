@@ -34,7 +34,7 @@ public class NewsArticle {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	@JsonAlias("snippet")
 	public String getContent() {
 		return content;
@@ -43,7 +43,7 @@ public class NewsArticle {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
+
 	public String getSource() {
 		return source;
 	}

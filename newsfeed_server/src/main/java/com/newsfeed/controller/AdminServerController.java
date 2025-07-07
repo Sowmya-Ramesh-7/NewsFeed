@@ -86,8 +86,7 @@ public class AdminServerController extends HttpServlet {
 	private void handleGetServerById(int serverId, HttpServletResponse response) throws IOException {
 		Optional<ExternalServer> server = serverService.findById(serverId);
 		if (server.isPresent()) {
-			objectMapper.writeValue(response.getWriter(),
-					ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, server.get()));
+			objectMapper.writeValue(response.getWriter(), ApiResponse.success(Messages.GOT_SERVER_DETAILS_SUCESSFULLY, server.get()));
 		} else {
 			handleNotFoundError(response, Messages.INVALID_SERVER_DETAILS);
 		}

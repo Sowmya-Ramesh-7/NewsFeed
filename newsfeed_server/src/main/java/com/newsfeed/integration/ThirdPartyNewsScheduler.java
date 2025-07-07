@@ -11,38 +11,38 @@ import java.util.concurrent.TimeUnit;
 
 public class ThirdPartyNewsScheduler {
 
-    private static final ScheduledExecutorService scheduler =
-            ApplicationContext.getObject(ScheduledExecutorService.class);
+	private static final ScheduledExecutorService scheduler = ApplicationContext
+			.getObject(ScheduledExecutorService.class);
+	
+	private final ExternalServerService serverService;
 
-    private final ExternalServerService serverService;
+	public ThirdPartyNewsScheduler(ExternalServerService serverService) {
+		this.serverService = serverService;
+	}
 
-    public ThirdPartyNewsScheduler(ExternalServerService serverService) {
-        this.serverService = serverService;
-    }
+	public void scheduleNewsFetchTasks() {
+		scheduler.scheduleAtFixedRate(this::fetchFromAllSources, 0, 3, TimeUnit.HOURS);
+	}
 
-    public void scheduleNewsFetchTasks() {
-        scheduler.scheduleAtFixedRate(this::fetchFromAllSources, 0, 3, TimeUnit.HOURS);
-    }
+	private void fetchFromAllSources() {
+		List<ExternalServer> servers = serverService.findAll();
 
-    private void fetchFromAllSources() {
-        List<ExternalServer> servers = serverService.findAll();
+		for (ExternalServer server : servers) {
+			if (!server.isActive()) {
+				continue;
+			}
 
-        for (ExternalServer server : servers) {
-            if (!server.isActive()) {
-                continue;
-            }
+			NewsFetcher fetcher = NewsFetcherFactory.getFetcher(server);
 
-            NewsFetcher fetcher = NewsFetcherFactory.getFetcher(server);
+			try {
+				List<NewsArticle> articles = fetcher.fetchArticles(server);
 
-            try {
-                List<NewsArticle> articles = fetcher.fetchArticles(server);
-                
-                fetcher.saveArticles(articles);
-                serverService.updateLastAccessed(server.getServerId());
-            } catch (Exception e) {
-            	e.printStackTrace();
-                System.err.println("Failed to fetch from " + server.getApiName() + ": " + e.getMessage());
-            }
-        }
-    }
+				fetcher.saveArticles(articles);
+				serverService.updateLastAccessed(server.getServerId());
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Failed to fetch from " + server.getApiName() + ": " + e.getMessage());
+			}
+		}
+	}
 }

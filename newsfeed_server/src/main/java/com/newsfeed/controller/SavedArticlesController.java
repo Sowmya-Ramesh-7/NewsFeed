@@ -51,10 +51,12 @@ public class SavedArticlesController extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String userId = (String) request.getAttribute("userId");
 		List<NewsArticle> articles = savedArticlesService.getSavedArticles(userId);
-		ApiResponse apiResponse = ApiResponse.success((articles.size() > 0) ? Messages.FOUND_SAVED_ARTICLES : Messages.NO_SAVED_ARTICLES, articles);
+		ApiResponse apiResponse = ApiResponse
+				.success((articles.size() > 0) ? Messages.FOUND_SAVED_ARTICLES : Messages.NO_SAVED_ARTICLES, articles);
 
 		response.setContentType("application/json");
 		objectMapper.writeValue(response.getWriter(), apiResponse);

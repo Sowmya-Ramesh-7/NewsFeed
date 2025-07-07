@@ -49,4 +49,5 @@ public class Messages {
 	public static final String NO_NOTIFICATIONS = "You have no notifications or You have read it.";
 	public static final String NOTIFICATION_MENU_HEADER = String.format(HIGHLIGHT_TEXT, "------------------N O T I F I C A T I O N S:------------------");
 	public static final String HIDE_ARTICLES_HEADER = String.format(HIGHLIGHT_TEXT, "------------------ Hide News Articles ------------------");
+	public static final String CONFIGURE_NOTIFICATIONS_HEADER = String.format(HIGHLIGHT_TEXT, "------------------ CONFIGURE - NOTIFICATIONS ------------------");
 }

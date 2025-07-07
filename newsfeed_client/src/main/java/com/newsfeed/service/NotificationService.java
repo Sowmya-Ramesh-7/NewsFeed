@@ -47,20 +47,4 @@ public class NotificationService {
         System.out.println(apiResponse.getMessage());
     }
 
-
-	public Map<String, Boolean> getCurrentConfig() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setKeywordPreferences(String newKeywords) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setCategoryPreference(String category, boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

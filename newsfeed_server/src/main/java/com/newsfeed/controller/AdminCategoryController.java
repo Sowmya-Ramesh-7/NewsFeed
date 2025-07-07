@@ -19,8 +19,8 @@ public class AdminCategoryController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private transient NewsCategoryService categoryService;
-	private transient ObjectMapper objectMapper;
+	private NewsCategoryService categoryService;
+	private ObjectMapper objectMapper;
 
 	@Override
 	public void init() throws ServletException {

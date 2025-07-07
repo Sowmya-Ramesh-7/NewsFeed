@@ -11,73 +11,73 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class ExternalServerDao {
-	
-    public Optional<ExternalServer> getById(int id) {
-        try (Connection connection = DBConnect.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_EXTERNAL_SERVER_BY_ID)) {
 
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
+	public Optional<ExternalServer> getById(int id) {
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_EXTERNAL_SERVER_BY_ID)) {
 
-            if (resultSet.next()) {
-                return Optional.of(mapResultSetToServer(resultSet));
-            }
+			preparedStatement.setInt(1, id);
+			ResultSet resultSet = preparedStatement.executeQuery();
 
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            throw new ServerException(Messages.DATABASE_ERROR);
-        }
-        return Optional.empty();
-    }
+			if (resultSet.next()) {
+				return Optional.of(mapResultSetToServer(resultSet));
+			}
 
-    public List<ExternalServer> getAll() {
-        List<ExternalServer> servers = new ArrayList<>();
+		} catch (SQLException | ClassNotFoundException | IOException e) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+		return Optional.empty();
+	}
 
-        try (Connection connection = DBConnect.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_ALL_EXTERNAL_SERVERS);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+	public List<ExternalServer> getAll() {
+		List<ExternalServer> servers = new ArrayList<>();
 
-            while (resultSet.next()) {
-                servers.add(mapResultSetToServer(resultSet));
-            }
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(Query.GET_ALL_EXTERNAL_SERVERS);
+				ResultSet resultSet = preparedStatement.executeQuery()) {
 
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            throw new ServerException(Messages.DATABASE_ERROR);
-        }
+			while (resultSet.next()) {
+				servers.add(mapResultSetToServer(resultSet));
+			}
 
-        return servers;
-    }
+		} catch (SQLException | ClassNotFoundException | IOException e) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
 
-    public int update(int serverId, String columnName, Object value) {
-        String query = "UPDATE external_server SET " + columnName + " = ? WHERE server_id = ?";
+		return servers;
+	}
 
-        try (Connection connection = DBConnect.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+	public int update(int serverId, String columnName, Object value) {
+		String query = "UPDATE external_server SET " + columnName + " = ? WHERE server_id = ?";
 
-            if (value instanceof String) {
-                preparedStatement.setString(1, (String) value);
-            } else if (value instanceof Boolean) {
-                preparedStatement.setBoolean(1, (Boolean) value);
-            } else if (value instanceof LocalDateTime) {
-                preparedStatement.setTimestamp(1, Timestamp.valueOf((LocalDateTime) value));
-            }
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setInt(2, serverId);
-            return preparedStatement.executeUpdate();
+			if (value instanceof String) {
+				preparedStatement.setString(1, (String) value);
+			} else if (value instanceof Boolean) {
+				preparedStatement.setBoolean(1, (Boolean) value);
+			} else if (value instanceof LocalDateTime) {
+				preparedStatement.setTimestamp(1, Timestamp.valueOf((LocalDateTime) value));
+			}
 
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            throw new ServerException(Messages.DATABASE_ERROR);
-        }
-    }
+			preparedStatement.setInt(2, serverId);
+			return preparedStatement.executeUpdate();
 
-    private ExternalServer mapResultSetToServer(ResultSet rs) throws SQLException {
-        ExternalServer server = new ExternalServer();
-        server.setServerId(rs.getInt("server_id"));
-        server.setApiName(rs.getString("api_name"));
-        server.setBaseUrl(rs.getString("base_url"));
-        server.setApiKey(rs.getString("api_key"));
-        Timestamp timestamp = rs.getTimestamp("last_accessed");
-        server.setLastAccessed(timestamp != null ? timestamp.toLocalDateTime() : null);
-        server.setActive(rs.getBoolean("is_active"));
-        return server;
-    }
+		} catch (SQLException | ClassNotFoundException | IOException e) {
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
+	}
+
+	private ExternalServer mapResultSetToServer(ResultSet rs) throws SQLException {
+		ExternalServer server = new ExternalServer();
+		server.setServerId(rs.getInt("server_id"));
+		server.setApiName(rs.getString("api_name"));
+		server.setBaseUrl(rs.getString("base_url"));
+		server.setApiKey(rs.getString("api_key"));
+		Timestamp timestamp = rs.getTimestamp("last_accessed");
+		server.setLastAccessed(timestamp != null ? timestamp.toLocalDateTime() : null);
+		server.setActive(rs.getBoolean("is_active"));
+		return server;
+	}
 }

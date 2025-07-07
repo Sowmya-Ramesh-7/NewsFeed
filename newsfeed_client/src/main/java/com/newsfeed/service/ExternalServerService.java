@@ -30,10 +30,10 @@ public class ExternalServerService {
 		HttpRequest request = HttpRequestBuilder.buildRequest("GET", ApiRoutes.SERVER_ROUTE, headers);
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
-		
+
 		if (response.statusCode() == 200) {
 			String dataJson = objectMapper.writeValueAsString(apiResponse.getData());
-			List<ExternalServer> servers = objectMapper.readValue(dataJson, new TypeReference<List<ExternalServer>>(){});
+			List<ExternalServer> servers = objectMapper.readValue(dataJson, new TypeReference<List<ExternalServer>>() {});
 			System.out.println(apiResponse.getMessage());
 			if (!servers.isEmpty()) {
 				return servers;
@@ -49,7 +49,7 @@ public class ExternalServerService {
 		String url = ApiRoutes.SERVER_ROUTE + "/" + serverId;
 		Map<String, String> headers = HttpRequestBuilder.getAuthHeader();
 		HttpRequest request = HttpRequestBuilder.buildRequest("GET", url, headers);
-		
+
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
 
@@ -65,10 +65,10 @@ public class ExternalServerService {
 
 	public void updateServerDetails(ExternalServer server) throws IOException, InterruptedException {
 		String url = ApiRoutes.SERVER_ROUTE + "/" + server.getServerId() + "?apiKey=" + server.getApiKey();
-		
+
 		Map<String, String> headers = HttpRequestBuilder.getAuthHeader();
 		HttpRequest request = HttpRequestBuilder.buildRequest("PUT", url, headers);
-		
+
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
 

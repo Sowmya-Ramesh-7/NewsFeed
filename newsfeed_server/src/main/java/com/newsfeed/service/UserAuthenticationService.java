@@ -15,11 +15,11 @@ public class UserAuthenticationService {
 	public UserAuthenticationService(UserDao userDao) {
 		this.userDao = userDao;
 	}
-	
+
 	public String signup(User user) {
 		Optional<User> userOptional = userDao.findByEmail(user.getEmailAddress());
-		
-		if(userOptional.isPresent()) {
+
+		if (userOptional.isPresent()) {
 			return "";
 		}
 		user.setIsAdmin(false);
@@ -27,17 +27,17 @@ public class UserAuthenticationService {
 		userDao.add(user);
 		return user.getUserId();
 	}
-	
-	public Map<String,String> login(String email, String password) {
-        Optional<User> existingUser = userDao.findByEmail(email);
-        Map<String, String> loginResponse = new HashMap<String,String>();
-        if (existingUser.isPresent() && existingUser.get().getPassword().equals(password)) {
-        	User user = existingUser.get();
-        	String token = JwtUtil.generateToken(user);
-        	loginResponse.put("token", token);
-        	loginResponse.put("isAdmin", String.valueOf(user.getIsAdmin()));
-        	loginResponse.put("name", user.getName());
-        }
-        return loginResponse;
-    }
+
+	public Map<String, String> login(String email, String password) {
+		Optional<User> existingUser = userDao.findByEmail(email);
+		Map<String, String> loginResponse = new HashMap<String, String>();
+		if (existingUser.isPresent() && existingUser.get().getPassword().equals(password)) {
+			User user = existingUser.get();
+			String token = JwtUtil.generateToken(user);
+			loginResponse.put("token", token);
+			loginResponse.put("isAdmin", String.valueOf(user.getIsAdmin()));
+			loginResponse.put("name", user.getName());
+		}
+		return loginResponse;
+	}
 }

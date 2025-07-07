@@ -1,6 +1,9 @@
 package com.newsfeed.controller;
 
+import com.newsfeed.model.NewsCategory;
 import com.newsfeed.model.NotificationHistory;
+import com.newsfeed.service.NewsCategoryService;
+import com.newsfeed.service.NotificationPreferencesService;
 import com.newsfeed.service.NotificationService;
 import com.newsfeed.util.ApplicationContext;
 import com.newsfeed.util.InputUtil;
@@ -15,9 +18,13 @@ import java.util.Map;
 public class NotificationController {
 
 	private NotificationService notificationService;
-	
-	public NotificationController(NotificationService notificationService){
+	private NotificationPreferencesService notificationPreferencesService;
+	private NewsCategoryService newsCategoryService;
+
+	public NotificationController(NotificationService notificationService, NotificationPreferencesService notificationPreferencesService, NewsCategoryService newsCategoryService) {
 		this.notificationService = notificationService;
+		this.notificationPreferencesService = notificationPreferencesService;
+		this.newsCategoryService = newsCategoryService;
 	}
 
 	public void manageNotifications() throws IOException, InterruptedException {
@@ -48,62 +55,59 @@ public class NotificationController {
 	}
 
 	public void viewNotifications() throws IOException, InterruptedException {
-	    List<NotificationHistory> notifications = notificationService.getUserNotifications();
+		List<NotificationHistory> notifications = notificationService.getUserNotifications();
 
-	    if (notifications.isEmpty()) {
-	        return;
-	    }
-	    
-	    List<String> readIds = new ArrayList<String>();
-	    for (NotificationHistory notification : notifications) {
-	        System.out.println("\nTitle: " + notification.getTitle());
-	        System.out.println("Message: " + notification.getMessage());
-	        System.out.println("Sent At: " + notification.getSentAt());
-	        System.out.println(Messages.LINE);
+		if (notifications.isEmpty()) {
+			return;
+		}
 
-	        readIds.add(notification.getNotificationId());
+		List<String> readIds = new ArrayList<String>();
+		for (NotificationHistory notification : notifications) {
+			System.out.println("\nTitle: " + notification.getTitle());
+			System.out.println("Message: " + notification.getMessage());
+			System.out.println("Sent At: " + notification.getSentAt());
+			System.out.println(Messages.LINE);
 
-	        String choice = InputUtil.readLine("1. Back\n2. Next\nEnter your choice: ");
-	        if (choice.equals("1")) {
-	            break;
-	        }
-	    }
+			readIds.add(notification.getNotificationId());
 
-	    if (!readIds.isEmpty()) {
-	        notificationService.markNotificationsAsRead(readIds);
-	    }
-	}
-
-	private void configureNotifications() throws IOException {
-		Map<String, Boolean> preferences = notificationService.getCurrentConfig();
-		while (true) {
-			System.out.println("\nCONFIGURE - NOTIFICATIONS");
-			int index = 1;
-			for (Map.Entry<String, Boolean> entry : preferences.entrySet()) {
-				System.out.printf("%d. %s - %s\n", index++, entry.getKey(), entry.getValue() ? "Enabled" : "Disabled");
-			}
-			System.out.println(index + ". Back");
-
-			String input = InputUtil.readLine(Prompts.ENTER_YOUR_CHOICE);
-			try {
-				int option = Integer.parseInt(input);
-				if (option == index)
-					return;
-
-				String category = preferences.keySet().toArray(new String[0])[option - 1];
-				boolean current = preferences.get(category);
-
-				if ("Keywords".equalsIgnoreCase(category)) {
-					String newKeywords = InputUtil.readLine(Prompts.ENTER_KEYWORDS_FOR_NOTIFICATION);
-					notificationService.setKeywordPreferences(newKeywords);
-					preferences.put(category, true);
-				} else {
-					preferences.put(category, !current);
-					notificationService.setCategoryPreference(category, !current);
-				}
-			} catch (Exception e) {
-				System.out.println(Messages.INVALID_OPTION);
+			String choice = InputUtil.readLine("1. Back\n2. Next\nEnter your choice: ");
+			if (choice.equals("1")) {
+				break;
 			}
 		}
+
+		if (!readIds.isEmpty()) {
+			notificationService.markNotificationsAsRead(readIds);
+		}
 	}
+
+	private void configureNotifications() throws IOException, InterruptedException {
+		Map<String, Boolean> preferences = notificationPreferencesService.getCategoryPreferences();
+		Map<String, NewsCategory> allCategories = newsCategoryService.getAllCategories();
+
+		List<String> categoryIds = new ArrayList<>(preferences.keySet());
+
+		while (true) {
+			System.out.println(Messages.CONFIGURE_NOTIFICATIONS_HEADER);
+			for (int i = 0; i < categoryIds.size(); i++) {
+				String categoryId = categoryIds.get(i);
+				String categoryName = allCategories.containsKey(categoryId)
+						? allCategories.get(categoryId).getCategory()
+						: categoryId;
+				boolean isEnabled = preferences.get(categoryId);
+				System.out.printf("%d. %s - %s\n", i + 1, categoryName, isEnabled ? "Enabled" : "Disabled");
+			}
+			System.out.printf("%d. Back\n", categoryIds.size() + 1);
+
+			String input = InputUtil.readLine(Prompts.SELECT_CATEGORY_TO_ENABLE_OR_DISABLE);
+			int option = Integer.parseInt(input);
+			if (option == categoryIds.size() + 1) return;
+
+			String selectedCategoryId = categoryIds.get(option - 1);
+			boolean currentValue = preferences.get(selectedCategoryId);
+			preferences.put(selectedCategoryId, !currentValue);
+			notificationPreferencesService.upsertCategoryPreference(selectedCategoryId, !currentValue);
+		}
+	}
+
 }

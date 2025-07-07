@@ -12,4 +12,6 @@ public class ApiRoutes {
 	public static final String SAVED_ARTICLE = BASE_URL + "/users/id/saved-articles";
 	public static final String NOTIFICATION_ROUTE = BASE_URL + "/users/id/notifications";
 	public static final String NOTIFICATIONS_READ = NOTIFICATION_ROUTE + "/read";
+	public static final String NOTIFICATION_CONFIG_ROUTE = BASE_URL + "/notifications/config";
+	public static final String ARTICLE_HISTORY_ROUTE = BASE_URL + "/history/articles";
 }

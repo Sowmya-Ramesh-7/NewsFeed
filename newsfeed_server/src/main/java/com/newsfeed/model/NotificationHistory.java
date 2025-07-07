@@ -67,7 +67,7 @@ public class NotificationHistory {
 	public void setRead(boolean isRead) {
 		this.isRead = isRead;
 	}
-	
+
 	public String getEmail() {
 		return email;
 	}

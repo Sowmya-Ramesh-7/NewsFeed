@@ -88,12 +88,12 @@ public class NewsArticleService {
 
 	private void sendPutRequest(Map<String, String> requestBody) throws IOException, InterruptedException {
 		String json = objectMapper.writeValueAsString(requestBody);
-		HttpRequest request = HttpRequestBuilder.buildRequest("PUT", ApiRoutes.ARTICLES_ROUTE, HttpRequestBuilder.getAuthHeader(), json);
+		HttpRequest request = HttpRequestBuilder.buildRequest("PUT", ApiRoutes.ARTICLES_ROUTE,
+				HttpRequestBuilder.getAuthHeader(), json);
 
 		HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
 		System.out.println(apiResponse.getMessage());
-		
-		
+
 	}
 }

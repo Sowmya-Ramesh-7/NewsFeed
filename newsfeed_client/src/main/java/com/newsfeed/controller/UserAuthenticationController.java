@@ -15,7 +15,7 @@ import com.newsfeed.util.constants.Prompts;
 
 public class UserAuthenticationController {
 	private UserAuthenticationService authenticationService;
-	
+
 	public UserAuthenticationController(UserAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -25,7 +25,7 @@ public class UserAuthenticationController {
 			String email = InputUtil.readLine(Prompts.ENTER_EMAIL, Patterns.EMAIL_PATTERN, Messages.INVALID_EMAIL);
 			String password = InputUtil.readLine(Prompts.ENTER_YOUR_PASSWORD);
 			return authenticationService.login(email, password);
-		}catch(IllegalArgumentException exception){
+		} catch (IllegalArgumentException exception) {
 			System.out.println(Messages.LOGIN_FAILED + exception.getMessage());
 			return Collections.emptyMap();
 		}
@@ -35,7 +35,8 @@ public class UserAuthenticationController {
 		try {
 			String name = InputUtil.readLine(Prompts.ENTER_NAME, Patterns.NAME_PATTERN, Messages.INVALID_NAME);
 			String email = InputUtil.readLine(Prompts.ENTER_EMAIL, Patterns.EMAIL_PATTERN, Messages.INVALID_EMAIL);
-			String password = InputUtil.readLine(Prompts.ENTER_PASSWORD, Patterns.PASSWORD_PATTERN, Messages.INVALID_PASSWORD);
+			String password = InputUtil.readLine(Prompts.ENTER_PASSWORD, Patterns.PASSWORD_PATTERN,
+					Messages.INVALID_PASSWORD);
 			long phone = getPhoneNumber();
 
 			User newUser = new User();
@@ -45,7 +46,7 @@ public class UserAuthenticationController {
 			newUser.setPhoneNumber(phone);
 
 			authenticationService.signup(newUser);
-		}catch(IllegalArgumentException exception){
+		} catch (IllegalArgumentException exception) {
 			System.out.println(Messages.SIGNUP_FAILED + exception.getMessage());
 		}
 	}

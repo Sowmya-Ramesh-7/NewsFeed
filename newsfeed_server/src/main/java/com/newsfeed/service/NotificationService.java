@@ -51,5 +51,4 @@ public class NotificationService {
 	public void markNotificationsAsRead(List<String> notificationIds) {
 		notificationDao.markNotificationsAsRead(notificationIds);
 	}
-
 }

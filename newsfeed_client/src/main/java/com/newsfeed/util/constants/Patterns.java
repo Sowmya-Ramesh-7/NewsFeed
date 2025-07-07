@@ -5,6 +5,6 @@ public class Patterns {
 	public static final String NAME_PATTERN = "^(?!\\s*$)[a-zA-Z\\s]+$";
 	public static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
 	public static final String DATE_FORMAT = "dd-MMM-yyyy";
-    public static final String TIME_FORMAT = "h:mma";
+	public static final String TIME_FORMAT = "h:mma";
 	public static final String DATE_INPUT_FORMAT = "yyyy-MM-dd";
 }

@@ -81,6 +81,30 @@ public class NewsArticleDao {
 		}
 	}
 
+    public List<NewsArticle> getPersonalizedHistory(String userId) {
+        List<NewsArticle> articles = new ArrayList<>();
+
+        try (Connection connection = DBConnect.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(Query.FETCH_NEWS_HISTORY_BASED_ON_PRIORITY)) {
+
+            preparedStatement.setString(1, userId);
+            preparedStatement.setString(2, userId);
+            preparedStatement.setString(3, userId);
+            preparedStatement.setString(4, userId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+            	NewsArticle article = getArticlefromResultSet(resultSet);
+				articles.add(article);
+            }
+
+        } catch (SQLException | ClassNotFoundException | IOException exception) {
+            throw new ServerException(Messages.DATABASE_ERROR);
+        }
+
+        return articles;
+    }
+
 	public List<NewsArticle> getArticlesByText(String keyword) {
 		List<NewsArticle> articles = new ArrayList<>();
 		String query = Query.SEARCH_BY_ARTILCES_KEYWORD;
@@ -118,32 +142,32 @@ public class NewsArticleDao {
 		return article;
 	}
 
-    public boolean hideArticleById(String articleId) {
-        String query = Query.HIDE_ARTICLE_BY_ID;
-        return executeUpdate(query, articleId);
-    }
+	public boolean hideArticleById(String articleId) {
+		String query = Query.HIDE_ARTICLE_BY_ID;
+		return executeUpdate(query, articleId);
+	}
 
-    public boolean hideArticlesByCategory(String categoryId) {
-        String query = Query.HIDE_ARTICLE_BY_CATEGORY_ID;
-        return executeUpdate(query, categoryId);
-    }
+	public boolean hideArticlesByCategory(String categoryId) {
+		String query = Query.HIDE_ARTICLE_BY_CATEGORY_ID;
+		return executeUpdate(query, categoryId);
+	}
 
-    public boolean hideArticlesByKeyword(String keyword) {
-        String query = Query.HIDE_ARTICLE_BY_KEYWORD;
-        return executeUpdate(query, keyword);
-    }
+	public boolean hideArticlesByKeyword(String keyword) {
+		String query = Query.HIDE_ARTICLE_BY_KEYWORD;
+		return executeUpdate(query, keyword);
+	}
 
-    private boolean executeUpdate(String query, String value) {
-    	int updatedCount = 0;
-    	try (Connection connection = DBConnect.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-        	preparedStatement.setString(1, value);
-        	updatedCount = preparedStatement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException | IOException exception) {
+	private boolean executeUpdate(String query, String value) {
+		int updatedCount = 0;
+		try (Connection connection = DBConnect.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+			preparedStatement.setString(1, value);
+			updatedCount = preparedStatement.executeUpdate();
+		} catch (SQLException | ClassNotFoundException | IOException exception) {
 			throw new ServerException(Messages.DATABASE_ERROR);
 		}
-        
-        return updatedCount > 0;
-    }
+
+		return updatedCount > 0;
+	}
 
 }

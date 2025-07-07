@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.newsfeed.model.NewsArticle;
+import com.newsfeed.service.ArticleHistoryService;
 import com.newsfeed.util.ApplicationContext;
 import com.newsfeed.util.InputUtil;
 import com.newsfeed.util.constants.Messages;
@@ -26,6 +28,7 @@ public class HomeController {
 	private static final ExternalServerController externalServerController = ApplicationContext.getObject(ExternalServerController.class);
 	private static final NewsCategoryController categoryController = ApplicationContext.getObject(NewsCategoryController.class);
 	private static final ArticleReactionController articleReactionController = ApplicationContext.getObject(ArticleReactionController.class);
+	private static final ArticleHistoryService articleHistoryService = ApplicationContext.getObject(ArticleHistoryService.class);
 
 	public static boolean home() {
 		boolean isExit = false;
@@ -185,67 +188,76 @@ public class HomeController {
 	}
 	
 	private static void displayNewsArticles(List<NewsArticle> newsArticles) throws IOException, InterruptedException {
-		if (newsArticles == null || newsArticles.isEmpty()) {
-			return;
-		}
-		int index = 0;
+	    if (newsArticles == null || newsArticles.isEmpty()) {
+	        return;
+	    }
 
-		while (index >= 0 && index < newsArticles.size()) {
-			NewsArticle newsArticle = newsArticles.get(index);
-			boolean goToPreviousMenu = false;
+	    int index = 0;
+	    List<String> readArticleIds = new ArrayList<String>();
 
-			System.out.println(Messages.LINE);
-			System.out.println("Article " + (index + 1) + " of " + newsArticles.size());
-			System.out.println(Messages.LINE);
+	    while (index >= 0 && index < newsArticles.size()) {
+	        NewsArticle newsArticle = newsArticles.get(index);
+	        boolean goToPreviousMenu = false;
 
-			displayArticlesMenu();
-			
-			System.out.println(newsArticle.toString());
-			
-			String choice = InputUtil.readLine(Prompts.CHOOSE_OPTION);
+	        System.out.println(Messages.LINE);
+	        System.out.println("Article " + (index + 1) + " of " + newsArticles.size());
+	        System.out.println(Messages.LINE);
 
-			switch (choice) {
-				case "1":
-					goToPreviousMenu = true;
-					break;
-				case "2":
-					authenticationController.logout();
-					goToPreviousMenu = true;
-					break;
-				case "3":
-					savedArticlesController.save(newsArticle.getArticleId());
-					break;
-				case "4":
-					articleReactionController.likeArticle(newsArticle.getArticleId());
-					break;
-				case "5":
-					articleReactionController.dislikeArticle(newsArticle.getArticleId());
-					break;
-				case "6":
-					articleReactionController.reportArticle(newsArticle.getArticleId());
-					break;
-				case "7":
-					if (index < newsArticles.size() - 1) {
-						index++;
-					} else {
-						System.out.println(Messages.LAST_ARTICLE);
-					}
-					break;
-				case "8":
-					if (index > 0) {
-						index--;
-					} else {
-						System.out.println(Messages.FIRST_ARTICLE);
-					}
-					break;
-				default:
-					System.out.println(Messages.INVALID_OPTION);
-			}
+	        displayArticlesMenu();
+	        System.out.println(newsArticle.toString());
 
-			if (goToPreviousMenu) {
-				break;
-			}
-		}
+	        if (!readArticleIds.contains(newsArticle.getArticleId())) {
+	            readArticleIds.add(newsArticle.getArticleId());
+	        }
+
+	        String choice = InputUtil.readLine(Prompts.CHOOSE_OPTION);
+
+	        switch (choice) {
+	            case "1":
+	                goToPreviousMenu = true;
+	                break;
+	            case "2":
+	                authenticationController.logout();
+	                goToPreviousMenu = true;
+	                break;
+	            case "3":
+	                savedArticlesController.save(newsArticle.getArticleId());
+	                break;
+	            case "4":
+	                articleReactionController.likeArticle(newsArticle.getArticleId());
+	                break;
+	            case "5":
+	                articleReactionController.dislikeArticle(newsArticle.getArticleId());
+	                break;
+	            case "6":
+	                articleReactionController.reportArticle(newsArticle.getArticleId());
+	                break;
+	            case "7":
+	                if (index < newsArticles.size() - 1) {
+	                    index++;
+	                } else {
+	                    System.out.println(Messages.LAST_ARTICLE);
+	                }
+	                break;
+	            case "8":
+	                if (index > 0) {
+	                    index--;
+	                } else {
+	                    System.out.println(Messages.FIRST_ARTICLE);
+	                }
+	                break;
+	            default:
+	                System.out.println(Messages.INVALID_OPTION);
+	        }
+
+	        if (goToPreviousMenu) {
+	            break;
+	        }
+	    }
+
+	    if (!readArticleIds.isEmpty()) {
+	        articleHistoryService.markArticlesAsRead(readArticleIds);
+	    }
 	}
 
 	private static void displayArticlesMenu() {
@@ -257,6 +269,5 @@ public class HomeController {
 		System.out.println("6. Report");
 		System.out.println("7. Next");
 		System.out.println("8. Previous");
-	}
-				
+	}	
 }

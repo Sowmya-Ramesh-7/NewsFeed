@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String path = httpRequest.getRequestURI().replaceFirst(httpRequest.getContextPath(), "");
@@ -65,7 +64,6 @@ public class JwtAuthenticationFilter implements Filter {
 
 			httpRequest.setAttribute("userId", userId);
 			chain.doFilter(request, response);
-
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			sendUnauthorized(httpResponse);
@@ -77,7 +75,7 @@ public class JwtAuthenticationFilter implements Filter {
 	}
 
 	private boolean isAdminRoute(String path) {
-		return path.startsWith(ADMIN_SERVER_PATH_PREFIX) || path.startsWith(ADMIN_CATEGORY_PATH_PREFIX) ;
+		return path.startsWith(ADMIN_SERVER_PATH_PREFIX) || path.startsWith(ADMIN_CATEGORY_PATH_PREFIX);
 	}
 
 	private void sendUnauthorized(HttpServletResponse response) throws IOException {

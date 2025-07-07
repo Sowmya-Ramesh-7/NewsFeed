@@ -16,4 +16,5 @@ public class Prompts {
 	public static final String ENTER_CATEGORY_NAME = "Enter the new News Category: ";
 	public static final String ENTER_KEYWORDS_FOR_CATEGORY = "Enter the keywords for the category: ";
 	public static final String ENTER_KEYWORDS_FOR_NOTIFICATION = "Enter the keywords for notifications: ";
+	public static final String SELECT_CATEGORY_TO_ENABLE_OR_DISABLE = "Select the category to enable or disable: ";
 }

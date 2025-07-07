@@ -30,8 +30,7 @@ public class NewsCategoryController {
 		String categoryName = InputUtil.readLine(Prompts.ENTER_CATEGORY_NAME, Patterns.NAME_PATTERN,
 				Messages.INVALID_CATEGORY);
 		List<NewsCategory> existingCategory = allCategories.values().stream()
-				.filter(category -> category.getCategory().equalsIgnoreCase(categoryName))
-				.collect(Collectors.toList());
+				.filter(category -> category.getCategory().equalsIgnoreCase(categoryName)).collect(Collectors.toList());
 
 		if (!existingCategory.isEmpty()) {
 			System.out.println(Messages.CATEGORY_ALREADY_EXISTS);
@@ -52,7 +51,7 @@ public class NewsCategoryController {
 		category.setCategoryId("CATEGORY_" + (allCategories.size() + 1));
 		category.setCategory(categoryName);
 		category.setKeywordsMap(keywordsMap);
-		if(newsCategoryService.addCategory(category)) {
+		if (newsCategoryService.addCategory(category)) {
 			allCategories.put(category.getCategoryId(), category);
 		}
 	}

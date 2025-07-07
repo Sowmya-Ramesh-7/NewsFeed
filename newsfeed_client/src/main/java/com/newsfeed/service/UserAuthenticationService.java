@@ -53,7 +53,7 @@ public class UserAuthenticationService {
 			System.out.println(loginResponse.getMessage());
 			return data;
 		}
-		
+
 		System.out.println(loginResponse.getMessage());
 		return data;
 	}
