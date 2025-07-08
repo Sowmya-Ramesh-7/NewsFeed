@@ -1,6 +1,5 @@
 package com.newsfeed.service;
 
-import com.newsfeed.dao.NewsArticleDao;
 import com.newsfeed.dao.NotificationDao;
 import com.newsfeed.dao.NotificationPrefernecesDao;
 import com.newsfeed.dao.UserDao;
@@ -8,6 +7,7 @@ import com.newsfeed.exception.ServerException;
 import com.newsfeed.model.NewsArticle;
 import com.newsfeed.model.NotificationHistory;
 import com.newsfeed.model.User;
+import com.newsfeed.util.EmailSender;
 import com.newsfeed.util.IdGenerator;
 import com.newsfeed.util.constants.Messages;
 
@@ -21,13 +21,12 @@ public class NotificationService {
 
 	private NotificationDao notificationDao;
 	private UserDao userDao;
-	private NewsArticleDao newsArticleDao;
 	private NotificationPrefernecesDao notificationPreferencesDao;
 
-	public NotificationService(NotificationDao notificationDao, UserDao userDao, NewsArticleDao newsArticleDao, NotificationPrefernecesDao notificationPreferencesDao) {
+	public NotificationService(NotificationDao notificationDao, UserDao userDao,
+			NotificationPrefernecesDao notificationPreferencesDao) {
 		this.notificationDao = notificationDao;
 		this.userDao = userDao;
-		this.newsArticleDao = newsArticleDao;
 		this.notificationPreferencesDao = notificationPreferencesDao;
 	}
 
@@ -62,48 +61,51 @@ public class NotificationService {
 	public void markNotificationsAsRead(List<String> notificationIds) {
 		notificationDao.markNotificationsAsRead(notificationIds);
 	}
-	
+
 	public void generateNotifications(List<NewsArticle> articles) {
-	    try {
-	        Map<String, String> userEmails = userDao.getUsersWithEnabledPreferencesAndEmails();
-	        Map<String, List<String>> userPreferences = notificationPreferencesDao.getAllUserCategoryPreferences();
-	        
-	        List<NotificationHistory> notifications = new ArrayList<>();
+		try {
+			Map<String, String> userEmails = userDao.getUsersWithEnabledPreferencesAndEmails();
+			Map<String, List<String>> userPreferences = notificationPreferencesDao.getAllUserCategoryPreferences();
 
-	        for (Map.Entry<String, String> entry : userEmails.entrySet()) {
-	            String userId = entry.getKey();
-	            String email = entry.getValue();
-	            List<String> preferredCategories = userPreferences.getOrDefault(userId, Collections.emptyList());
+			List<NotificationHistory> notifications = new ArrayList<>();
 
-	            for (NewsArticle article : articles) {
-	                if (preferredCategories.contains(article.getCategoryId())) {
-	                    NotificationHistory notification = createArticleNotification(userId, article, email);
-	                    notifications.add(notification);
-	                }
-	            }
-	        }
+			for (Map.Entry<String, String> entry : userEmails.entrySet()) {
+				String userId = entry.getKey();
+				String email = entry.getValue();
 
-	        if (!notifications.isEmpty()) {
-	            notificationDao.addNotifications(notifications);
-	        }
+				List<String> preferredCategories = userPreferences.getOrDefault(userId, Collections.emptyList());
 
-	    } catch (Exception exception) {
-	    	exception.printStackTrace();
-	        throw new ServerException(Messages.DATABASE_ERROR);
-	    }
+				for (NewsArticle article : articles) {
+					if (preferredCategories.contains(article.getCategoryId())) {
+						NotificationHistory notification = createArticleNotification(userId, article, email);
+						notifications.add(notification);
+					}
+				}
+			}
+
+			if (!notifications.isEmpty()) {
+				EmailSender.sendEmails(notifications, userEmails);
+				notificationDao.addNotifications(notifications);
+			}
+
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			throw new ServerException(Messages.DATABASE_ERROR);
+		}
 	}
 
 	private NotificationHistory createArticleNotification(String userId, NewsArticle article, String email) {
 		NotificationHistory notification = new NotificationHistory();
-        notification.setNotificationId(IdGenerator.generate("NOTIFY"));
-        notification.setUserId(userId);
-        notification.setArticleId(article.getArticleId());
-        notification.setTitle(article.getTitle());
-        notification.setMessage("New article in your preferred category: " + article.getTitle() +". Here is the article link: " + article.getArticleUrl());
-        notification.setSentAt(LocalDateTime.now());
-        notification.setEmail(email);
-        notification.setRead(false);
-        return notification;
+		notification.setNotificationId(IdGenerator.generate("NOTIFY"));
+		notification.setUserId(userId);
+		notification.setArticleId(article.getArticleId());
+		notification.setTitle(article.getTitle());
+		notification.setMessage("New article in your preferred category: " + article.getTitle()
+				+ ". Here is the article link: " + article.getArticleUrl());
+		notification.setSentAt(LocalDateTime.now());
+		notification.setEmail(email);
+		notification.setRead(false);
+		return notification;
 	}
 
 }

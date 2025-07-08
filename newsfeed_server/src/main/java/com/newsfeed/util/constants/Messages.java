@@ -37,4 +37,5 @@ public class Messages {
 	public static final String FETCHED_PREFERENCES = "Notifications preferences fetched successfully.";
 	public static final String NOTIFICATION_CONFIGURED = "Notification preference updated.";
 	public static final String ARTICLE_MARKED_AS_READ = "Article(s) marked as read successfully.";
+	public static final String EMAIL_FORMAT = "Hello,\n\n%s\n\nRegards,\nNewsFeed Team";
 }
